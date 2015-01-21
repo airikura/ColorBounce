@@ -150,7 +150,8 @@ timer.performWithDelay( 1000, checkMemory, 0 )
 
 
 												local function changeColor(event)
-													print("hello")
+													local tapSound
+													local playTapSound
 													print(event.myName)
 													if (event.target == red) then
 														gc = 1
@@ -158,21 +159,28 @@ timer.performWithDelay( 1000, checkMemory, 0 )
 														bcolor[0] = .8
 														bcolor[1] = 0
 														bcolor[2] = 0
-													end
-													if (event.target == green) then
+														tapSound = audio.loadSound("tapRed.mp3" )
+
+													elseif (event.target == green) then
 														gc = 3
 														guy:setFillColor(0,.8,0)
 														bcolor[0] = 0
 														bcolor[1] = .8
 														bcolor[2] = 0
-													end
-													if (event.target == blue) then
+														tapSound = audio.loadSound("tapGreen.mp3" )
+													elseif (event.target == blue) then
 														gc = 2
 														guy:setFillColor(0,0,0.8)
 														bcolor[0] = 0
 														bcolor[1] = 0
 														bcolor[2] = .8
+														tapSound = audio.loadSound("tapBlue.mp3")
 													end
+
+													playTapSound = audio.play(tapSound)
+													audio.dispose(tapSound)
+													playtapSound = nil
+													tapSound = nil
 												end
 
 
@@ -349,8 +357,9 @@ timer.performWithDelay( 1000, checkMemory, 0 )
 
 								function scene:create( event )
 									local sceneGroup = self.view
-									physics.setGravity( 0, 15)
+									physics.setGravity( 0, 17.5)
 									print("creating scene")
+					
 									scoreBox = display.newText(0, 400,50, "Helvetica", 36)
 									block = display.newRect(100 , display.contentHeight - 100, 200, 50 )
 									block.myName ="block"
@@ -395,7 +404,7 @@ timer.performWithDelay( 1000, checkMemory, 0 )
 									local sceneGroup = self.view
 									local phase = event.phase
     								if ( phase == "will" ) then
-    									playBackgroundMusic = audio.play(backgroundMusic, {loops = -1, fadein = 500, fadeout = 500})
+    									playBackgroundMusic = audio.play(backgroundMusic, {loops = -1, fadein = 500, fadeout = 500, channel = 1})
     									guy.x = 100;
     									guy.y = 150;
 
