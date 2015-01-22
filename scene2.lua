@@ -18,10 +18,14 @@
 		    top = 200,
 		    id = "newGame",
 		    label = "New Game",
-		    onEvent = handleButtonEvent
+		    onEvent = handleButtonEvent,
+		    fontSize = 20,
+		    labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 } }
 			}
+
 			newGame.x = display.contentCenterX
 		newGame.y = display.contentCenterY
+
 			sceneGroup:insert(newGame)
 			backgroundMusic = audio.loadSound("colorBallMenuMusic.mp3")
 		end

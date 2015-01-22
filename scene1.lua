@@ -177,7 +177,7 @@ timer.performWithDelay( 1000, checkMemory, 0 )
 														tapSound = audio.loadSound("tapBlue.mp3")
 													end
 
-													playTapSound = audio.play(tapSound)
+													--playTapSound = audio.play(tapSound)
 													audio.dispose(tapSound)
 													playtapSound = nil
 													tapSound = nil
@@ -360,7 +360,7 @@ timer.performWithDelay( 1000, checkMemory, 0 )
 									physics.setGravity( 0, 17.5)
 									print("creating scene")
 					
-									scoreBox = display.newText(0, 400,50, "Helvetica", 36)
+									scoreBox = display.newText(0, 450,50, "Helvetica", 36)
 									block = display.newRect(100 , display.contentHeight - 100, 200, 50 )
 									block.myName ="block"
 									block:setFillColor(math.random(0,255)/255,math.random(0,255)/255,math.random(0,255)/255)
