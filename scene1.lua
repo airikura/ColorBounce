@@ -82,15 +82,17 @@ local function after(event)
 				r[rLength]:setFillColor( 1, 0,.5 )
 		end
 	end
-							if (rLength>10) then
-								r[rLength - 10]:removeSelf( )
-							end
-							rLength = rLength + 1
-						end
+
+		if (rLength>10) then
+			r[rLength - 10]:removeSelf( )
+		end
+							
+	rLength = rLength + 1
+end
 
 
 
-						local function rainbow(event)
+	local function rainbow(event)
 							if rainbowHappening == false then
 								rainbowHappening = true
 								rLength = 1
