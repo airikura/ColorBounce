@@ -70,21 +70,18 @@ local function after(event)
 
 			elseif (rLength == 2) then
 				r[rLength]:setFillColor( 1, .5,0 )
-				elseif (rLength == 3) then
-					r[rLength]:setFillColor( 1, 1,0 )
-					elseif (rLength == 4) then
-						r[rLength]:setFillColor( 0, 1,0 )
-						elseif (rLength == 5) then
-							r[rLength]:setFillColor( 0, 0, 1 )
-							elseif (rLength == 6) then
-								r[rLength]:setFillColor( .5, 0,1 )
-								elseif (rLength == 7) then
-									r[rLength]:setFillColor( 1, 0,.5 )
-								end
-
-
-
-							end
+			elseif (rLength == 3) then
+				r[rLength]:setFillColor( 1, 1,0 )
+			elseif (rLength == 4) then
+				r[rLength]:setFillColor( 0, 1,0 )
+			elseif (rLength == 5) then
+				r[rLength]:setFillColor( 0, 0, 1 )
+			elseif (rLength == 6) then
+				r[rLength]:setFillColor( .5, 0,1 )
+			elseif (rLength == 7) then
+				r[rLength]:setFillColor( 1, 0,.5 )
+		end
+	end
 							if (rLength>10) then
 								r[rLength - 10]:removeSelf( )
 							end
@@ -103,7 +100,7 @@ local function after(event)
 
 						local function isAlive( event )
 							if (guy.y > display.contentHeight) then
-								
+
 
 								composer.gotoScene("scene2", options)
 							end
@@ -304,14 +301,14 @@ local function after(event)
 																					ecolor[1] = bcolor[1]
 																					ecolor[2] = bcolor[2]
 																					
-																					
+
 																					if (event.other.myName == "block") then
 																						if (b1c == gc) then
 																							timer.performWithDelay(10, explode, 15)
 																							i = 1
 																							updateScore()
 																							firsttouch = false	
-																							
+
 																						else 
 																							composer.gotoScene("scene2", options)
 																						end
@@ -363,7 +360,7 @@ local function after(event)
 																					local sceneGroup = self.view
 																					physics.setGravity( 0, 17.5)
 																					print("creating scene")
-																					
+
 																					scoreBox = display.newText(0, 450,50, "Helvetica", 36)
 																					block = display.newRect(100 , display.contentHeight - 100, 200, 50 )
 																					block.myName ="block"
@@ -388,7 +385,7 @@ local function after(event)
 																					physics.addBody(guy, {density=1, friction=0, bounce=0 , radius = 25 } );
 																					guy.isSleepingAllowed = false
 																					backgroundMusic = audio.loadSound("colorBallMusicCorona.mp3")		
-																					
+
 																					sceneGroup:insert( scoreBox )
 																					sceneGroup:insert( block )
 																					sceneGroup:insert( block2 )
@@ -398,7 +395,7 @@ local function after(event)
 																					sceneGroup:insert( green )
 																					sceneGroup:insert( guy )
 
-																					
+
 
 																				end
 
@@ -413,9 +410,9 @@ local function after(event)
 																						guy.y = 150;
 
 																						block.x = 100;
-																						
+
 																						block2.x = 400;
-																						
+
 																						block3.x = -100;
 
 																						canJump = false
@@ -456,12 +453,12 @@ Runtime:addEventListener("enterFrame", isAlive)
 									
 									elseif ( phase == "did" ) then
 
-										
+
 										print("entering scene")
-										
-										
-										
-										
+
+
+
+
 											--	powerUp = display.newRect( 1500, block.y - 50, 50, 50 )
 											--	physics.addBody( powerUp, "static" , {density=0, friction=0, bounce=0 } )
 										--		powerUp.gravityScale = 0
@@ -480,7 +477,7 @@ Runtime:addEventListener("enterFrame", isAlive)
 
 
 
-								
+
 
 
 
@@ -496,7 +493,7 @@ Runtime:addEventListener("enterFrame", isAlive)
 									sceneGroup = nil
 
 
-									
+
 								end
 
 								function scene:hide( event )
