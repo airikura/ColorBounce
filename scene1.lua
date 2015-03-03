@@ -7,6 +7,7 @@ local scoreBox
 local block
 local block2
 local block3
+local block4
 local red
 local blue
 local green
@@ -18,6 +19,7 @@ local canJump
 local b1c 
 local b2c 
 local b3c 
+local b4c  --- ************** ---
 local gc 
 local score
 local speed
@@ -203,7 +205,9 @@ end
 local function go( event )
 	block.x = block.x - speed
 	if (block.x < -200) then
-		block.x = 600
+		print("block 4")
+		print(block4.x)
+		block.x = block4.x + math.random(275,350)
 		b1c = setBlockColor(block)
 	end
 end
@@ -251,7 +255,7 @@ end
 	local function go2( event )
 		block2.x = block2.x - speed  
 		if (block2.x < -200) then
-			block2.x = 600
+			block2.x = block.x + math.random(275,350)
 			b2c = setBlockColor(block2)
 
 		end
@@ -260,8 +264,16 @@ end
 local function go3( event )
 	block3.x = block3.x - speed  
 	if (block3.x < -200) then
-		block3.x = 600
+		block3.x = block2.x + math.random(275,350)
 		b3c = setBlockColor(block3)
+	end
+end
+
+local function go4( event )
+	block4.x = block4.x - speed
+	if (block4.x < -200) then 
+		block4.x = block3.x + math.random(275,350)
+		b4c = setBlockColor(block4)
 	end
 end
 
@@ -379,6 +391,9 @@ function scene:create( event )
 	physics.addBody(block3, "static", {density = 1, friction = 0, bounce = 0});
 	block3.myName= "block3" 
 	b3c = setBlockColor(block3)
+	block4= display.newRect(1600, display.contentHeight - 100, 200, 50 )
+	physics.addBody(block4, "static", {density = 1, friction = 0, bounce = 0});
+	b4c = setBlockColor(block4);
 	red = display.newCircle(display.contentWidth/6, display.contentHeight * .87, 25 )
 	red:setFillColor(.8, 0, 0)
 	blue = display.newCircle(display.contentWidth/ 2, display.contentHeight * .87, 25 )
@@ -400,6 +415,7 @@ function scene:create( event )
 	sceneGroup:insert( block )
 	sceneGroup:insert( block2 )
 	sceneGroup:insert( block3 )
+	sceneGroup:insert( block4 )
 	sceneGroup:insert( red )
 	sceneGroup:insert( blue )
 	sceneGroup:insert( green )
@@ -424,6 +440,7 @@ function scene:show( event )
 	block.x = 700
 	block2.x = 1000
 	block3.x = 1300
+	block4.x = 1600
 
 
 		canJump = false
@@ -456,6 +473,7 @@ Runtime:addEventListener("enterFrame", isAlive)
 	Runtime:addEventListener("enterFrame", go)
 	Runtime:addEventListener("enterFrame", go2)
 	Runtime:addEventListener("enterFrame",  go3)
+	Runtime:addEventListener("enterFrame", go4)
 	Runtime:addEventListener("enterFrame", startBlockGo)
 	Runtime:addEventListener("enterFrame", playerGo)
 
@@ -504,6 +522,7 @@ function scene:hide( event )
 	Runtime:removeEventListener("enterFrame", go)
 	Runtime:removeEventListener("enterFrame", go2)
 	Runtime:removeEventListener("enterFrame",  go3)
+	Runtime:removeEventListener("enterFrame", go4)
 	Runtime:removeEventListener("enterFrame", playerGo)
 
 	audio.stop(playBackgroundMusic)
