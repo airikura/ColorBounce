@@ -59,6 +59,9 @@ local function checkMemory()
 end
 timer.performWithDelay( 1000, checkMemory, 0 )
 
+
+
+
 local function after(event)
 	if (rLength<8) then
 		r[rLength] = display.newRect( (display.contentWidth/7) * rLength -display.contentWidth/ 14 , display.contentHeight/2 , display.contentWidth/7 , display.contentHeight)
@@ -261,6 +264,16 @@ local function go3( event )
 		b3c = setBlockColor(block3)
 	end
 end
+
+local function startBlockGo( event )
+		startingBlock.x = startingBlock.x - speed  
+		if (startingBlock.x < -1000) then
+			
+				Runtime:removeEventListener( "enterFrame", startBlockGo)
+		
+		end
+end
+
 function afterTimer()
 	t[i]:removeSelf( )
 end
@@ -347,20 +360,21 @@ end
 
 
 
+
 function scene:create( event )
 	local sceneGroup = self.view
 	physics.setGravity( 0, 17.5)
 	print("creating scene")
 
 	scoreBox = display.newText(0, 450,50, "Helvetica", 36)
-	block = display.newRect(100 , display.contentHeight - 100, 200, 50 )
+	block = display.newRect(700 , display.contentHeight - 100, 200, 50 )
 	block.myName ="block"
 	b1c = setBlockColor(block)
 	physics.addBody(block, "static", {density = 1, friction = 0, bounce = 0});
-	block2 = display.newRect(400 , display.contentHeight - 100, 200, 50 )
+	block2 = display.newRect(1000 , display.contentHeight - 100, 200, 50 )
 	physics.addBody(block2, "static", {density = 1, friction = 0, bounce = 0});
 	block2.myName= "block2"
-	block3 = display.newRect(-100 , display.contentHeight - 100, 200, 50 )
+	block3 = display.newRect(1300 , display.contentHeight - 100, 200, 50 )
 	b2c = setBlockColor(block2)
 	physics.addBody(block3, "static", {density = 1, friction = 0, bounce = 0});
 	block3.myName= "block3" 
@@ -377,6 +391,11 @@ function scene:create( event )
 	guy.isSleepingAllowed = false
 	backgroundMusic = audio.loadSound("colorBallMusicCorona.mp3")		
 
+
+	startingBlock = display.newRect(0 , display.contentHeight - 100, 1000, 50)
+	physics.addBody(startingBlock, "static", {density = 1, friction = 0, bounce = 0});
+	startingBlock:setFillColor( math.random(0,255)/255,math.random(0,255)/255,math.random(0,255)/255)
+
 	sceneGroup:insert( scoreBox )
 	sceneGroup:insert( block )
 	sceneGroup:insert( block2 )
@@ -385,6 +404,7 @@ function scene:create( event )
 	sceneGroup:insert( blue )
 	sceneGroup:insert( green )
 	sceneGroup:insert( guy )
+	sceneGroup:insert( startingBlock )
 
 
 
@@ -397,19 +417,16 @@ function scene:show( event )
 	local phase = event.phase
 	if ( phase == "will" ) then
 		playBackgroundMusic = audio.play(backgroundMusic, {loops = -1, fadein = 500, fadeout = 500, channel = 1})
-		guy.x = 100;
-		guy.y = 150;
+		
+	guy.x = 100
+	guy.y = 150
+	startingBlock.x = 0
+	block.x = 700
+	block2.x = 1000
+	block3.x = 1300
 
-		block.x = 100;
-
-		block2.x = 400;
-
-		block3.x = -100;
 
 		canJump = false
-		b1c = 1
-		b2c = 1
-		b3c = 1
 		gc = 1
 		score = 0
 		speed = 5
@@ -439,7 +456,9 @@ Runtime:addEventListener("enterFrame", isAlive)
 	Runtime:addEventListener("enterFrame", go)
 	Runtime:addEventListener("enterFrame", go2)
 	Runtime:addEventListener("enterFrame",  go3)
+	Runtime:addEventListener("enterFrame", startBlockGo)
 	Runtime:addEventListener("enterFrame", playerGo)
+
 	
 	
 	elseif ( phase == "did" ) then
@@ -486,6 +505,7 @@ function scene:hide( event )
 	Runtime:removeEventListener("enterFrame", go2)
 	Runtime:removeEventListener("enterFrame",  go3)
 	Runtime:removeEventListener("enterFrame", playerGo)
+
 	audio.stop(playBackgroundMusic)
 	playBackgroundMusic = nil;
 
