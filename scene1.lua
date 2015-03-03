@@ -207,7 +207,7 @@ local function go( event )
 	if (block.x < -200) then
 		print("block 4")
 		print(block4.x)
-		block.x = block4.x + math.random(275,350)
+		block.x = block4.x + math.random(255,330)
 		b1c = setBlockColor(block)
 	end
 end
@@ -255,7 +255,7 @@ end
 	local function go2( event )
 		block2.x = block2.x - speed  
 		if (block2.x < -200) then
-			block2.x = block.x + math.random(275,350)
+			block2.x = block.x + math.random(255,330)
 			b2c = setBlockColor(block2)
 
 		end
@@ -264,7 +264,7 @@ end
 local function go3( event )
 	block3.x = block3.x - speed  
 	if (block3.x < -200) then
-		block3.x = block2.x + math.random(275,350)
+		block3.x = block2.x + math.random(255,330)
 		b3c = setBlockColor(block3)
 	end
 end
@@ -272,7 +272,7 @@ end
 local function go4( event )
 	block4.x = block4.x - speed
 	if (block4.x < -200) then 
-		block4.x = block3.x + math.random(275,350)
+		block4.x = block3.x + math.random(255,330)
 		b4c = setBlockColor(block4)
 	end
 end
@@ -351,6 +351,15 @@ local function onCollision( event )
 						else 
 							composer.gotoScene("scene2", options)
 				end
+					elseif (event.other.myName == "block4") then 
+						if (b4c == gc) then 
+							timer.performWithDelay(10, explode, 15)
+							i = 1
+							updateScore()
+							firsttouch = false
+						else 
+							composer.gotoScene("scene2", options)
+						end
 			end
 		end
 		elseif ( event.phase == "ended" ) then  
@@ -393,6 +402,7 @@ function scene:create( event )
 	b3c = setBlockColor(block3)
 	block4= display.newRect(1600, display.contentHeight - 100, 200, 50 )
 	physics.addBody(block4, "static", {density = 1, friction = 0, bounce = 0});
+	block4.myName= "block4"
 	b4c = setBlockColor(block4);
 	red = display.newCircle(display.contentWidth/6, display.contentHeight * .87, 25 )
 	red:setFillColor(.8, 0, 0)
