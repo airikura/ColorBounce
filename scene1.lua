@@ -207,7 +207,7 @@ local function go( event )
 	if (block.x < -200) then
 		print("block 4")
 		print(block4.x)
-		block.x = block4.x + math.random(255,330)
+		block.x = block4.x + math.random(225 + 3 * speed, 300 + 3 * speed)
 		b1c = setBlockColor(block)
 	end
 end
@@ -241,7 +241,7 @@ end
 
 	local function raiseSpeed(newScore)
 		if (newScore > 5) then
-			speed = speed + 2/ newScore
+			speed = speed + (2 / (newScore))
 			print(speed)
 		end
 	end
@@ -255,7 +255,7 @@ end
 	local function go2( event )
 		block2.x = block2.x - speed  
 		if (block2.x < -200) then
-			block2.x = block.x + math.random(255,330)
+			block2.x = block.x + math.random(225 + 3 * speed,300 + 3 * speed)
 			b2c = setBlockColor(block2)
 
 		end
@@ -264,7 +264,7 @@ end
 local function go3( event )
 	block3.x = block3.x - speed  
 	if (block3.x < -200) then
-		block3.x = block2.x + math.random(255,330)
+		block3.x = block2.x + math.random(225 + 3 * speed,300+ 3 * speed)
 		b3c = setBlockColor(block3)
 	end
 end
@@ -272,7 +272,7 @@ end
 local function go4( event )
 	block4.x = block4.x - speed
 	if (block4.x < -200) then 
-		block4.x = block3.x + math.random(255,330)
+		block4.x = block3.x + math.random(225 + 3 * speed,300 + 3 * speed)
 		b4c = setBlockColor(block4)
 	end
 end
