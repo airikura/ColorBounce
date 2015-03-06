@@ -2,6 +2,7 @@ local composer = require( "composer" )
 local scene = composer.newScene()
 composer.purgeOnSceneChange = true
 local physics = require( "physics")
+local score1 = require( "score" )
 physics.start(nosleep);
 local scoreBox
 local block
@@ -28,7 +29,7 @@ local jumpSpeed
 local rLength
 			--[[	local gradient = graphics.newGradient(
 					{ 1, 0, 0 },
-					{ 0, 0, 1 },
+					{ 0, 0, 1 c},
 					"down" ) --]]
 local pUpRandom 
 local rainbowHappening 
@@ -41,6 +42,7 @@ local bcolor
 local ecolor
 local backgroundMusic
 local playBackgroundMusic
+
 
 
 
@@ -104,11 +106,32 @@ local function rainbow(event)
 	end
 end
 
-local function isAlive( event )
-	if (guy.y > display.contentHeight) then
-		composer.gotoScene("scene2", options)
+local function onComplete( event )
+	if event.action == "clicked" then
+		local i = event.index
+		print (i.. "index isss")
+		if i == 1 then 
+			print("goinggggg")
+			--native.cancelAlert(mAlert)
+			composer.gotoScene("scene2", options)
+		end
 	end
 end
+
+local function isAlive( event )
+	if (guy.y > display.contentHeight) then
+		if ((score1.load() == nil ) or (score > score1.load()))then
+			score1.set(score)
+			score1.save()
+			native.showAlert("High Score!", "Congratulations, you scored " .. tostring(score1.load()), {"Continue"}, onComplete)
+			Runtime:removeEventListener("enterFrame", isAlive)
+		else
+			composer.gotoScene("scene2", options)
+		end
+	end
+end
+
+
 
 
 local function movepup (event)
@@ -134,8 +157,6 @@ local function movepup (event)
 		end
 
 	end
-
-
 
 local function playerGo(event)
 	if holding then
@@ -456,6 +477,7 @@ function scene:show( event )
 		canJump = false
 		gc = 1
 		score = 0
+		scoreBox.text = 0
 		speed = 5
 		holding = false
 		jumpSpeed = -125
@@ -527,7 +549,7 @@ function scene:hide( event )
 	if (phase ==  "will") then 
 		local sceneGroup = self.view
 		--sceneGroup:removeSelf()
-		Runtime:removeEventListener("enterFrame", isAlive)
+		
 	--	Runtime:addEventListener( "enterFrame", pUpGo );
 	Runtime:removeEventListener("enterFrame", go)
 	Runtime:removeEventListener("enterFrame", go2)
