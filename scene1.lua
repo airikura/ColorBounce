@@ -17,7 +17,7 @@ local rightWall
 local topWall
 local powerUp
 local canJump 
-local b1c 
+local b1c
 local b2c 
 local b3c 
 local b4c  --- ************** ---
@@ -126,6 +126,7 @@ local function isAlive( event )
 			native.showAlert("High Score!", "Congratulations, you scored " .. tostring(score1.load()), {"Continue"}, onComplete)
 			Runtime:removeEventListener("enterFrame", isAlive)
 		else
+			Runtime:removeEventListener("enterFrame", isAlive)
 			composer.gotoScene("scene2", options)
 		end
 	end
@@ -228,7 +229,7 @@ local function go( event )
 	if (block.x < -200) then
 		print("block 4")
 		print(block4.x)
-		block.x = block4.x + math.random(225 + 3 * speed, 300 + 3 * speed)
+		block.x = block4.x + math.random(250 + 3 * speed, 315 + 3 * speed)
 		b1c = setBlockColor(block)
 	end
 end
@@ -276,7 +277,7 @@ end
 	local function go2( event )
 		block2.x = block2.x - speed  
 		if (block2.x < -200) then
-			block2.x = block.x + math.random(225 + 3 * speed,300 + 3 * speed)
+			block2.x = block.x + math.random(250 + 3 * speed,315 + 3 * speed)
 			b2c = setBlockColor(block2)
 
 		end
@@ -285,7 +286,7 @@ end
 local function go3( event )
 	block3.x = block3.x - speed  
 	if (block3.x < -200) then
-		block3.x = block2.x + math.random(225 + 3 * speed,300+ 3 * speed)
+		block3.x = block2.x + math.random(250 + 3 * speed,315+ 3 * speed)
 		b3c = setBlockColor(block3)
 	end
 end
