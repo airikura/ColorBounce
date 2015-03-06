@@ -408,6 +408,7 @@ function scene:create( event )
 	physics.setGravity( 0, 17.5)
 	print("creating scene")
 
+	score1.init()
 	scoreBox = display.newText(0, 450,50, "Helvetica", 36)
 	block = display.newRect(700 , display.contentHeight - 100, 200, 50 )
 	block.myName ="block"
