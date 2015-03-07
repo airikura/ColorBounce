@@ -475,9 +475,8 @@ function scene:show( event )
 	block3.x = 1300
 	block4.x = 1600
 
-
-		canJump = false
-		gc = 1
+	canJump = false
+	gc = 1
 		score = 0
 		scoreBox.text = 0
 		speed = 5
@@ -536,10 +535,9 @@ end
 function scene:destroy( event )
 	print("destroy")
 	local sceneGroup = self.view
-	audio.dispose(backgroundMusic)
-	backgroundMusic = nil
 	sceneGroup:removeSelf()
-	sceneGroup = nil
+			audio.dispose(backgroundMusic)
+			backgroundMusic = nil;
 
 
 
@@ -549,23 +547,20 @@ function scene:hide( event )
 	print("exiting")
 	local phase = event.phase
 	if (phase ==  "will") then 
-		local sceneGroup = self.view
+		--local sceneGroup = self.view
 		--sceneGroup:removeSelf()
-		
-	--	Runtime:addEventListener( "enterFrame", pUpGo );
-	Runtime:removeEventListener("enterFrame", go)
-	Runtime:removeEventListener("enterFrame", go2)
-	Runtime:removeEventListener("enterFrame",  go3)
-	Runtime:removeEventListener("enterFrame", go4)
-	Runtime:removeEventListener("enterFrame", playerGo)
-
-	audio.stop(playBackgroundMusic)
-	playBackgroundMusic = nil;
-
+		local sceneGroup = self.view
+		audio.stop(playBackgroundMusic)
+		playBackgroundMusic = nil
+	--	audio.dispose(backgroundMusic)
+	--	backgroundMusic = nil
+	--	sceneGroup:removeSelf()
+	--	sceneGroup = nil
+	elseif ( phase == "did" ) then
+   	     -- Called immediately after scene goes off screen.
+   	end
 end
 	--composer.removeScene("scene1")
-	
-end
 
 scene:addEventListener( "create", scene)
 scene:addEventListener( "hide", scene )	
