@@ -2,31 +2,44 @@
 		local scene = composer.newScene()
 		local widget = require( "widget" )
 		local physics = require( "physics" )
-		local newGame 
+		local newGame
+		local scoreButton 
 		local backgroundMusic
 		local playBackgroundMusic
-	--	composer.removeOnSceneChange = true
+		composer.purgeOnSceneChange = true
 		print("screen")
 
 		function scene:create(event)
-
 			print("create")
 			local sceneGroup = self.view
 			newGame = widget.newButton
 			{
-		    left = 100,
-		    top = 200,
-		    id = "newGame",
-		    label = "New Game",
-		    onEvent = handleButtonEvent,
-		    fontSize = 20,
-		    labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 } }
+		    	left = 100,
+		    	top = 200,
+		    	id = "newGame",
+		    	label = "New Game",
+		    	onEvent = handleScoreButtonEvent,
+		    	fontSize = 20,
+		    	labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 } }
 			}
+			scoreButton = widget.newButton
+			{
+				left = 100,
+		    	top = 200,
+		    	id = "scoreButton",
+		    	label = "High Score",
+		    	onEvent = handleButtonEvent,
+		    	fontSize = 20,
+		    	labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 }}
+			}
+			scoreButton.x = display.contentCenterX 
+			scoreButton.y = display.contentCenterY  + 50
 
 			newGame.x = display.contentCenterX
-		newGame.y = display.contentCenterY
+			newGame.y = display.contentCenterY
 
 			sceneGroup:insert(newGame)
+			sceneGroup:insert(scoreButton)
 			backgroundMusic = audio.loadSound("colorBallMenuMusic.mp3")
 		end
 
@@ -42,7 +55,6 @@
 			local function handleButtonEvent( event )
 			--	print("Button Clicked")
 		    	if ( event.phase == "ended" ) then
-
 		   			 local options =
 				{
 				    effect = "fade",
@@ -55,23 +67,33 @@
 
 		        composer.gotoScene( "scene1" , options);
 		        return true;
-		      
-
-		  	 end
-
-			
-			
-   		
+		  		end
 			end
+		  	local function handleScoreButtonEvent ( event ) 
+		  	 	if ( event.phase == "ended" ) then
+		   			 local options =
+				{
+				    effect = "fade",
+				    time = 50,
+				    params =
+		 		   {
+		 		   }
+				}
+				print("Button Clicked")
+		        composer.gotoScene( "scene3" , options);
+		        return true;
+		  	
+				end
+			end
+			scoreButton:addEventListener("touch", handleScoreButtonEvent)
 			newGame:addEventListener("touch", handleButtonEvent)
-	end
+		end
 		end
 
 
 		function scene:hide( event )
 			   local sceneGroup = self.view
     	local phase = event.phase
-
    		 if ( phase == "will" ) then
         -- Called when the scene is on screen (but is about to go off screen).
         -- Insert code here to "pause" the scene.
@@ -85,7 +107,6 @@
     		elseif ( phase == "did" ) then
    	     -- Called immediately after scene goes off screen.
    			 end
-			
 		end
 
 		function scene:destroy( event ) 
@@ -102,6 +123,5 @@
 		scene:addEventListener( "show", scene )
 		scene:addEventListener( "hide", scene)
 		scene:addEventListener( "destroy", scene )
-
 
 		return scene
