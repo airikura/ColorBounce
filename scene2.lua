@@ -6,12 +6,14 @@
 		local scoreButton 
 		local backgroundMusic
 		local playBackgroundMusic
-		composer.purgeOnSceneChange = true
+		composer.removeOnSceneChange = true
 		print("screen")
 
 		function scene:create(event)
 			print("create")
+			
 			local sceneGroup = self.view
+
 			newGame = widget.newButton
 			{
 		    	left = 100,
@@ -43,7 +45,6 @@
 			backgroundMusic = audio.loadSound("colorBallMenuMusic.mp3")
 		end
 
-
 		function scene:show( event )
 			local sceneGroup = self.view
 			local phase = event.phase
@@ -51,6 +52,7 @@
 			playBackgroundMusic = audio.play(backgroundMusic, {loops = -1})
    		elseif ( phase == "did" ) then
    			print("entering scene")
+   			composer.removeHidden()
 			local sceneGroup = self.view
 			local function handleButtonEvent( event )
 			--	print("Button Clicked")
@@ -101,7 +103,7 @@
        		print("exit")
 			local sceneGroup = self.view
 			--sceneGroup:removeSelf()
-			composer.removeScene("scene2")
+			--composer.removeScene("scene2")
 			audio.stop(playBackgroundMusic)
 			playBackgroundMusic = nil;
     		elseif ( phase == "did" ) then
@@ -112,7 +114,8 @@
 		function scene:destroy( event ) 
 			print("destroy")
 			local sceneGroup = self.view
-			sceneGroup:removeSelf()
+			--sceneGroup:removeSelf()
+			--sceneGroup = nil
 			audio.dispose(backgroundMusic)
 			backgroundMusic = nil;
 		end

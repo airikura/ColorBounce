@@ -50,7 +50,6 @@ function M.load()
    local file = io.open( path, "r" )
    if ( file ) then
       -- read all contents of file into a string
-      print("helloooo")
       local contents = file:read( "*a" )
       local score = tonumber(contents);
       io.close( file )

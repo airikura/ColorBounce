@@ -1,9 +1,9 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
-composer.purgeOnSceneChange = true
+composer.removeOnSceneChange = true
 local physics = require( "physics")
-local score1 = require( "score" )
 physics.start(nosleep);
+local score1 = require( "score" )
 local scoreBox
 local block
 local block2
@@ -118,22 +118,27 @@ local function onComplete( event )
 	end
 end
 
-local function isAlive( event )
-	if (guy.y > display.contentHeight) then
-		if ((score1.load() == nil ) or (score > score1.load()))then
-			score1.set(score)
-			score1.save()
-			native.showAlert("High Score!", "Congratulations, you scored " .. tostring(score1.load()), {"Continue"}, onComplete)
-			Runtime:removeEventListener("enterFrame", isAlive)
-		else
-			Runtime:removeEventListener("enterFrame", isAlive)
-			composer.gotoScene("scene2", options)
-		end
+local function endGame() 
+	--Runtime:removeEventListener("enterFrame", isAlive)
+	print ("end game called")
+	if ((score1.load() == nil ) or (score > score1.load()))then
+		score1.set(score)
+		score1.save()
+		native.showAlert("High Score!", "Congratulations, you scored " .. tostring(score1.load()), {"Continue"}, onComplete)
+		
+	else
+		native.showAlert("Score", "You scored " .. score .. "... Better luck next time!", {"Continue"}, onComplete)
+		--composer.gotoScene("scene2", options)
 	end
 end
 
-
-
+local function isAlive( event )
+	
+	print ("isAlive called")
+	if (guy.y > display.contentHeight or guy.x < 75) then
+		endGame()
+	end
+end
 
 local function movepup (event)
 		powerUp.y =  block.y -500
@@ -162,8 +167,9 @@ local function movepup (event)
 local function playerGo(event)
 	if holding then
 		linearVelocityX, linearVelocityY = guy:getLinearVelocity()
-		print(linearVelocityY)
-		if linearVelocityY > -225 then
+		print("linearVelocityX = " .. linearVelocityX)
+		print("linearVelocityY = " .. linearVelocityY)
+		if linearVelocityY > -200 then
 			guy:setLinearVelocity(0,jumpSpeed)
 			jumpSpeed = jumpSpeed - 9
 		else
@@ -209,7 +215,7 @@ local function changeColor(event)
 	end
 
 local function setBlockColor(block)
-	randomNumber = math.random(1,3)
+		randomNumber = math.random(1,3)
 
 		if (randomNumber == 1) then
 			block:setFillColor(.7,0,0 )
@@ -225,7 +231,7 @@ local function setBlockColor(block)
 end
 
 local function go( event )
-	block.x = block.x - speed
+	block.x = block.x - (speed/2)
 	if (block.x < -200) then
 		print("block 4")
 		print(block4.x)
@@ -239,7 +245,7 @@ local function touchHandler( event )
 		if event.phase == "began" then
 			display.getCurrentStage():setFocus( event.target )
 			event.target.isFocus = true
-			Runtime:addEventListener( "enterFrame", playerGo)
+			--Runtime:addEventListener( "enterFrame", playerGo)
 			jumpSpeed = -125
 			holding = true
 			changeColor(event)
@@ -275,36 +281,36 @@ end
 
 
 	local function go2( event )
-		block2.x = block2.x - speed  
+		block2.x = block2.x - (speed/2)
 		if (block2.x < -200) then
-			block2.x = block.x + math.random(250 + 3 * speed,315 + 3 * speed)
+			block2.x = block.x + math.random(250 + 3 * speed,315 + 3.5* speed)
 			b2c = setBlockColor(block2)
 
 		end
 	end
 
 local function go3( event )
-	block3.x = block3.x - speed  
+	block3.x = block3.x - (speed/2)  
 	if (block3.x < -200) then
-		block3.x = block2.x + math.random(250 + 3 * speed,315+ 3 * speed)
+		block3.x = block2.x + math.random(250 + 3 * speed,315+ 3.5 * speed)
 		b3c = setBlockColor(block3)
 	end
 end
 
 local function go4( event )
-	block4.x = block4.x - speed
+	block4.x = block4.x - (speed/2)
 	if (block4.x < -200) then 
-		block4.x = block3.x + math.random(225 + 3 * speed,300 + 3 * speed)
+		block4.x = block3.x + math.random(225 + 3 * speed,300 + 3.5 * speed)
 		b4c = setBlockColor(block4)
 	end
 end
 
 local function startBlockGo( event )
-		startingBlock.x = startingBlock.x - speed  
+		startingBlock.x = startingBlock.x - (speed/2)
 		if (startingBlock.x < -1000) then
-			
-				Runtime:removeEventListener( "enterFrame", startBlockGo)
-		
+			Runtime:removeEventListener( "enterFrame", startBlockGo)
+			startingBlock:removeSelf()
+			startingBlock = nil
 		end
 end
 
@@ -328,30 +334,31 @@ end
 
 
 local function onCollision( event )
-
+	local shouldEnd = false
 	if ( event.phase == "began" ) then
 		if (event.other.myName == "powerUp") then
 			rainbow()
 			Runtime:removeEventListener( "enterFrame", pUpGo )
 			powerUp:removeSelf( )
 		end
+		--if (Math.guy.x == 100) then
+		canJump = true
+		--end
+		if (firsttouch) then
+			ecolor[0] = bcolor[0]
+			ecolor[1] = bcolor[1]
+			ecolor[2] = bcolor[2]
 
-	canJump = true
-	if (firsttouch) then
-		ecolor[0] = bcolor[0]
-		ecolor[1] = bcolor[1]
-		ecolor[2] = bcolor[2]
-
-		if (event.other.myName == "block") then
-			if (b1c == gc) then
-				timer.performWithDelay(10, explode, 15)
-				i = 1
-				updateScore()
-				firsttouch = false	
-
-			else 
-				composer.gotoScene("scene2", options)
-			end
+			if (event.other.myName == "block") then
+				if (b1c == gc) then
+					timer.performWithDelay(10, explode, 15)
+					i = 1
+					updateScore()
+					firsttouch = false	
+				else 
+					print("shouldEnd")
+					shouldEnd = true
+				end
 
 			elseif (event.other.myName == "block2") then
 				if (b2c == gc) then
@@ -359,33 +366,42 @@ local function onCollision( event )
 					i = 1
 					updateScore()
 					firsttouch = false	
-					
-					else 
-						composer.gotoScene("scene2", options)
-					end
-					
-					elseif (event.other.myName == "block3") then
-						if (b3c == gc) then
-							timer.performWithDelay(10, explode, 15)
-							i = 1
-							updateScore()
-							firsttouch = false	
-						else 
-							composer.gotoScene("scene2", options)
+				
+				else 
+					print("shouldEnd")
+					shouldEnd = true
 				end
-					elseif (event.other.myName == "block4") then 
-						if (b4c == gc) then 
-							timer.performWithDelay(10, explode, 15)
-							i = 1
-							updateScore()
-							firsttouch = false
-						else 
-							composer.gotoScene("scene2", options)
-						end
+					
+			elseif (event.other.myName == "block3") then
+				if (b3c == gc) then
+					timer.performWithDelay(10, explode, 15)
+					i = 1
+					updateScore()
+					firsttouch = false	
+				else 
+					print("shouldEnd")
+					shouldEnd = true
+				end
+			elseif (event.other.myName == "block4") then 
+				if (b4c == gc) then 
+					timer.performWithDelay(10, explode, 15)
+					i = 1
+					updateScore()
+					firsttouch = false
+				else 
+					print ("shouldEnd")
+					shouldEnd = true
+				end
 			end
 		end
+	print("ending")
+	if (shouldEnd) then
+		endGame()
+		end
 		elseif ( event.phase == "ended" ) then  
-	end
+
+			
+		end
 end
 
 local function colorTouch(event)
@@ -405,6 +421,7 @@ end
 
 
 function scene:create( event )
+	
 	local sceneGroup = self.view
 	physics.setGravity( 0, 17.5)
 	print("creating scene")
@@ -465,6 +482,7 @@ function scene:show( event )
 	local sceneGroup = self.view
 	local phase = event.phase
 	if ( phase == "will" ) then
+		print("will show")
 		playBackgroundMusic = audio.play(backgroundMusic, {loops = -1, fadein = 500, fadeout = 500, channel = 1})
 		
 	guy.x = 100
@@ -476,13 +494,14 @@ function scene:show( event )
 	block4.x = 1600
 
 	canJump = false
-	gc = 1
-		score = 0
-		scoreBox.text = 0
-		speed = 5
+	gc = -1
+	score = 0
+	scoreBox.text = 0
+			speed = 5
 		holding = false
 		jumpSpeed = -125
 		rLength = 1
+
 									--[[	local gradient = graphics.newGradient(
 											{ 1, 0, 0 },
 											{ 0, 0, 1 },
@@ -501,7 +520,7 @@ blue:addEventListener( "touch", touchHandler)
 green:addEventListener("touch" , touchHandler) 
 guy:addEventListener( "collision",  onCollision)
 
-Runtime:addEventListener("enterFrame", isAlive)
+	Runtime:addEventListener("enterFrame", isAlive)
 	--	Runtime:addEventListener( "enterFrame", pUpGo );
 	Runtime:addEventListener("enterFrame", go)
 	Runtime:addEventListener("enterFrame", go2)
@@ -516,7 +535,7 @@ Runtime:addEventListener("enterFrame", isAlive)
 
 
 		print("entering scene")
-
+		composer.removeHidden()
 
 
 
@@ -535,29 +554,46 @@ end
 function scene:destroy( event )
 	print("destroy")
 	local sceneGroup = self.view
-	sceneGroup:removeSelf()
-			audio.dispose(backgroundMusic)
-			backgroundMusic = nil;
-
-
-
+	local phase = event.phase
+   	if ( phase == "will" ) then
+		
+	elseif ( phase == "did" ) then
+		--sceneGroup:removeSelf()
+		--sceneGroup = nil
+		audio.dispose(backgroundMusic)
+		backgroundMusic = nil;
+	end
 end
 
 function scene:hide( event )
 	print("exiting")
+	
 	local phase = event.phase
 	if (phase ==  "will") then 
 		--local sceneGroup = self.view
 		--sceneGroup:removeSelf()
-		local sceneGroup = self.view
+--[		local sceneGroup = self.view
+		if (startingBlock ~= nil) then
+			Runtime:removeEventListener("enterFrame", startBlockGo)
+		end
+		Runtime:removeEventListener("enterFrame", isAlive)
+		Runtime:removeEventListener("enterFrame", playerGo)
+		Runtime:removeEventListener("enterFrame", go)
+		Runtime:removeEventListener("enterFrame", go2)
+		Runtime:removeEventListener("enterFrame", go3)
+		Runtime:removeEventListener("enterFrame", go4)
+		--composer.removeScene( "scene1" )
+
 		audio.stop(playBackgroundMusic)
-		playBackgroundMusic = nil
-	--	audio.dispose(backgroundMusic)
-	--	backgroundMusic = nil
-	--	sceneGroup:removeSelf()
-	--	sceneGroup = nil
+		playBackgroundMusic = nil 
+		
+		--audio.dispose(backgroundMusic)
+		--backgroundMusic = nil
+		--sceneGroup:removeSelf()
+		--sceneGroup = nil
 	elseif ( phase == "did" ) then
    	     -- Called immediately after scene goes off screen.
+   	     physics.stop()
    	end
 end
 	--composer.removeScene("scene1")
