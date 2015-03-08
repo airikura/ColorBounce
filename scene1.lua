@@ -135,7 +135,7 @@ end
 local function isAlive( event )
 	
 	print ("isAlive called")
-	if (guy.y > display.contentHeight or guy.x < 75) then
+	if (guy.y > display.contentHeight or guy.x < 60) then
 		endGame()
 	end
 end
@@ -235,7 +235,7 @@ local function go( event )
 	if (block.x < -200) then
 		print("block 4")
 		print(block4.x)
-		block.x = block4.x + math.random(250 + 3 * speed, 315 + 3 * speed)
+		block.x = block4.x + math.random(180 + 10 * speed, 225 + 10 * speed)
 		b1c = setBlockColor(block)
 	end
 end
@@ -283,7 +283,7 @@ end
 	local function go2( event )
 		block2.x = block2.x - (speed/2)
 		if (block2.x < -200) then
-			block2.x = block.x + math.random(250 + 3 * speed,315 + 3.5* speed)
+			block2.x = block.x + math.random(180 + 10 * speed,225 + 10* speed)
 			b2c = setBlockColor(block2)
 
 		end
@@ -292,7 +292,7 @@ end
 local function go3( event )
 	block3.x = block3.x - (speed/2)  
 	if (block3.x < -200) then
-		block3.x = block2.x + math.random(250 + 3 * speed,315+ 3.5 * speed)
+		block3.x = block2.x + math.random(180 + 10 * speed,225+ 10 * speed)
 		b3c = setBlockColor(block3)
 	end
 end
@@ -300,7 +300,7 @@ end
 local function go4( event )
 	block4.x = block4.x - (speed/2)
 	if (block4.x < -200) then 
-		block4.x = block3.x + math.random(225 + 3 * speed,300 + 3.5 * speed)
+		block4.x = block3.x + math.random(180 + 10 * speed,225 + 10 * speed)
 		b4c = setBlockColor(block4)
 	end
 end
@@ -428,19 +428,19 @@ function scene:create( event )
 
 	score1.init()
 	scoreBox = display.newText(0, 450,50, "Helvetica", 36)
-	block = display.newRect(700 , display.contentHeight - 100, 200, 50 )
+	block = display.newRect(700 , display.contentHeight - 100, 150, 50 )
 	block.myName ="block"
 	b1c = setBlockColor(block)
 	physics.addBody(block, "static", {density = 1, friction = 0, bounce = 0});
-	block2 = display.newRect(1000 , display.contentHeight - 100, 200, 50 )
+	block2 = display.newRect(1000 , display.contentHeight - 100, 150, 50 )
 	physics.addBody(block2, "static", {density = 1, friction = 0, bounce = 0});
 	block2.myName= "block2"
-	block3 = display.newRect(1300 , display.contentHeight - 100, 200, 50 )
+	block3 = display.newRect(1300 , display.contentHeight - 100, 150, 50 )
 	b2c = setBlockColor(block2)
 	physics.addBody(block3, "static", {density = 1, friction = 0, bounce = 0});
 	block3.myName= "block3" 
 	b3c = setBlockColor(block3)
-	block4= display.newRect(1600, display.contentHeight - 100, 200, 50 )
+	block4= display.newRect(1600, display.contentHeight - 100, 150, 50 )
 	physics.addBody(block4, "static", {density = 1, friction = 0, bounce = 0});
 	block4.myName= "block4"
 	b4c = setBlockColor(block4);
