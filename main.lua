@@ -7,4 +7,5 @@
     {
     }
 }
+			display.setDefault( "background", 1, .9921568627, .8156862745)
 			composer.gotoScene( "scene2" , options);

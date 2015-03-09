@@ -27,6 +27,7 @@ local speed
 local holding 
 local jumpSpeed
 local rLength
+local hasCollided 
 			--[[	local gradient = graphics.newGradient(
 					{ 1, 0, 0 },
 					{ 0, 0, 1 c},
@@ -89,7 +90,6 @@ local function after(event)
 				r[rLength]:setFillColor( 1, 0,.5 )
 		end
 	end
-
 		if (rLength>10) then
 			r[rLength - 10]:removeSelf( )
 		end
@@ -134,8 +134,8 @@ end
 
 local function isAlive( event )
 	
-	print ("isAlive called")
-	if (guy.y > display.contentHeight or guy.x < 60) then
+	--print ("isAlive called")
+	if (guy.y > display.contentHeight or guy.x < 50) then
 		endGame()
 	end
 end
@@ -167,11 +167,11 @@ local function movepup (event)
 local function playerGo(event)
 	if holding then
 		linearVelocityX, linearVelocityY = guy:getLinearVelocity()
-		print("linearVelocityX = " .. linearVelocityX)
-		print("linearVelocityY = " .. linearVelocityY)
+		--print("linearVelocityX = " .. linearVelocityX)
+		--print("linearVelocityY = " .. linearVelocityY)
 		if linearVelocityY > -200 then
 			guy:setLinearVelocity(0,jumpSpeed)
-			jumpSpeed = jumpSpeed - 9
+			jumpSpeed = jumpSpeed - 12
 		else
 			holding = false
 		end
@@ -231,40 +231,51 @@ local function setBlockColor(block)
 end
 
 local function go( event )
+	
 	block.x = block.x - (speed/2)
 	if (block.x < -200) then
 		print("block 4")
 		print(block4.x)
-		block.x = block4.x + math.random(180 + 10 * speed, 225 + 10 * speed)
+		block.x = block4.x + math.random(115 + 20* speed, 185 + 21* speed)
 		b1c = setBlockColor(block)
 	end
 end
 
 local function touchHandler( event )
-	if canJump then
+	print("touchHandler")
+	print(holding)
+	print(canJump)
+	print(hasCollided)
+	
 		if event.phase == "began" then
+			if (canJump and hasCollided) then
 			display.getCurrentStage():setFocus( event.target )
 			event.target.isFocus = true
 			--Runtime:addEventListener( "enterFrame", playerGo)
 			jumpSpeed = -125
 			holding = true
+			firsttouch = true
+			canJump = false
+			hasCollided = false
 			changeColor(event)
+		end
 
-			elseif event.target.isFocus then
-				if event.phase == "moved" then
-					elseif event.phase == "ended" then
-					holding = false
-					jumpSpeed = -125
-					firsttouch = true
-					canJump = false
-					--Runtime:removeEventListener( "enterFrame", playerGo)
-					display.getCurrentStage():setFocus( nil )
-					event.target.isFocus = false
+		elseif event.target.isFocus then
+		if event.phase == "moved" then
+		elseif (event.phase == "ended" or event.phase == "cancelled") then
+		print("hello")
+				holding = false
+				jumpSpeed = -125
+				
+				canJump = true
+				--Runtime:removeEventListener( "enterFrame", playerGo)		
+				display.getCurrentStage():setFocus( nil )
+				event.target.isFocus = false
 			end
 		end
 
 	return true
-	end
+	
 end
 
 	local function raiseSpeed(newScore)
@@ -283,7 +294,7 @@ end
 	local function go2( event )
 		block2.x = block2.x - (speed/2)
 		if (block2.x < -200) then
-			block2.x = block.x + math.random(180 + 10 * speed,225 + 10* speed)
+			block2.x = block.x + math.random(120 + 20* speed,185 + 21* speed)
 			b2c = setBlockColor(block2)
 
 		end
@@ -292,7 +303,7 @@ end
 local function go3( event )
 	block3.x = block3.x - (speed/2)  
 	if (block3.x < -200) then
-		block3.x = block2.x + math.random(180 + 10 * speed,225+ 10 * speed)
+		block3.x = block2.x + math.random(120 + 20 * speed,185+ 21* speed)
 		b3c = setBlockColor(block3)
 	end
 end
@@ -300,7 +311,7 @@ end
 local function go4( event )
 	block4.x = block4.x - (speed/2)
 	if (block4.x < -200) then 
-		block4.x = block3.x + math.random(180 + 10 * speed,225 + 10 * speed)
+		block4.x = block3.x + math.random(120 + 20* speed,185 + 21* speed)
 		b4c = setBlockColor(block4)
 	end
 end
@@ -315,21 +326,25 @@ local function startBlockGo( event )
 end
 
 function afterTimer()
-	t[i]:removeSelf( )
+	t[i]:removeSelf()
 end
 
-
 local function explode (event)
+	--if (i == 16) then
+	--afterTimer()
+	--end
+
 	i = i + 1
 	t[i] = display.newCircle( guy.x, guy.y, 25 + i *50 )
 	t[i]:setFillColor( ecolor[0],ecolor[1],ecolor[2],.5  )
 	t[i]:toBack()
-	if (i>2) then
+		if (i>2) then
 		t[i-1]:removeSelf( )
 	end
 	if (i == 16) then
 		timer.performWithDelay(100, afterTimer, 1)
 	end
+	
 end
 
 
@@ -339,9 +354,10 @@ local function onCollision( event )
 		if (event.other.myName == "powerUp") then
 			rainbow()
 			Runtime:removeEventListener( "enterFrame", pUpGo )
-			powerUp:removeSelf( )
+			powerUp:removeSelf()
 		end
 		--if (Math.guy.x == 100) then
+		hasCollided = true
 		canJump = true
 		--end
 		if (firsttouch) then
@@ -404,17 +420,17 @@ local function onCollision( event )
 		end
 end
 
-local function colorTouch(event)
-	if (event.phase == "began") then 
-		if (canJump) then
-			canJump = false
-			firsttouch = true
-			guy:setLinearVelocity( 0, -250 )
-			changeColor(event);
-		end
-	end
-	return true;
-end
+--local function colorTouch(event)
+--	if (event.phase == "began") then 
+--		if (canJump) then
+--			canJump = false
+--			firsttouch = true
+--			guy:setLinearVelocity( 0, -250 )
+--			changeColor(event);
+--		end
+--	end
+--	return true;
+--end
 
 
 
@@ -425,22 +441,21 @@ function scene:create( event )
 	local sceneGroup = self.view
 	physics.setGravity( 0, 17.5)
 	print("creating scene")
-
 	score1.init()
 	scoreBox = display.newText(0, 450,50, "Helvetica", 36)
-	block = display.newRect(700 , display.contentHeight - 100, 150, 50 )
+	block = display.newRoundedRect(700 , display.contentHeight - 100, 150, 50,4)
 	block.myName ="block"
 	b1c = setBlockColor(block)
 	physics.addBody(block, "static", {density = 1, friction = 0, bounce = 0});
-	block2 = display.newRect(1000 , display.contentHeight - 100, 150, 50 )
+	block2 = display.newRoundedRect(1000 , display.contentHeight - 100, 150, 50,4)
 	physics.addBody(block2, "static", {density = 1, friction = 0, bounce = 0});
 	block2.myName= "block2"
-	block3 = display.newRect(1300 , display.contentHeight - 100, 150, 50 )
+	block3 = display.newRoundedRect(1300 , display.contentHeight - 100, 150, 50,4)
 	b2c = setBlockColor(block2)
 	physics.addBody(block3, "static", {density = 1, friction = 0, bounce = 0});
 	block3.myName= "block3" 
 	b3c = setBlockColor(block3)
-	block4= display.newRect(1600, display.contentHeight - 100, 150, 50 )
+	block4= display.newRoundedRect(1600, display.contentHeight - 100, 150, 50,4)
 	physics.addBody(block4, "static", {density = 1, friction = 0, bounce = 0});
 	block4.myName= "block4"
 	b4c = setBlockColor(block4);
@@ -457,7 +472,7 @@ function scene:create( event )
 	backgroundMusic = audio.loadSound("colorBallMusicCorona.mp3")		
 
 
-	startingBlock = display.newRect(0 , display.contentHeight - 100, 1000, 50)
+	startingBlock = display.newRoundedRect(0 , display.contentHeight - 100, 1000, 50,4)
 	physics.addBody(startingBlock, "static", {density = 1, friction = 0, bounce = 0});
 	startingBlock:setFillColor( math.random(0,255)/255,math.random(0,255)/255,math.random(0,255)/255)
 
@@ -486,17 +501,19 @@ function scene:show( event )
 		playBackgroundMusic = audio.play(backgroundMusic, {loops = -1, fadein = 500, fadeout = 500, channel = 1})
 		
 	guy.x = 100
-	guy.y = 150
+	guy.y = 75
 	startingBlock.x = 0
 	block.x = 700
-	block2.x = 1000
-	block3.x = 1300
-	block4.x = 1600
+	block2.x = 950
+	block3.x = 1200
+	block4.x = 1450
 
+	hasCollided = false
 	canJump = false
 	gc = -1
 	score = 0
 	scoreBox.text = 0
+	scoreBox:setTextColor(0.2,0.2,0.2)
 			speed = 5
 		holding = false
 		jumpSpeed = -125
