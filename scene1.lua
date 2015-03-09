@@ -2,6 +2,7 @@ local composer = require( "composer" )
 local scene = composer.newScene()
 composer.removeOnSceneChange = true
 local physics = require( "physics")
+local ads = require("ads")
 physics.start(nosleep);
 local score1 = require( "score" )
 local scoreBox
@@ -28,6 +29,7 @@ local holding
 local jumpSpeed
 local rLength
 local hasCollided 
+
 			--[[	local gradient = graphics.newGradient(
 					{ 1, 0, 0 },
 					{ 0, 0, 1 c},
@@ -57,12 +59,19 @@ local options =
 }
 }
 
-local function checkMemory()
-	collectgarbage( "collect" )
-	local memUsage_str = string.format( "MEMORY = %.3f KB", collectgarbage( "count" ) )
-	print( memUsage_str, "TEXTURE = "..(system.getInfo("textureMemoryUsed") / (1024 * 1024) ) )
+local function adListener( event )
+			print("hello")
+    if ( event.isError ) then
+        --Failed to receive an ad
+    end
 end
-timer.performWithDelay( 1000, checkMemory, 0 )
+
+--local function checkMemory()
+--	collectgarbage( "collect" )
+--	local memUsage_str = string.format( "MEMORY = %.3f KB", collectgarbage( "count" ) )
+--	print( memUsage_str, "TEXTURE = "..(system.getInfo("textureMemoryUsed") / (1024 * 1024) ) )
+--end
+--timer.performWithDelay( 1000, checkMemory, 0 )
 
 
 
@@ -237,6 +246,9 @@ local function go( event )
 		print("block 4")
 		print(block4.x)
 		block.x = block4.x + math.random(115 + 20* speed, 185 + 21* speed)
+		if (score > 20) then
+			block.y = display.contentHeight - 100 + math.random(-19 - speed/2, 30 + speed)
+		end
 		b1c = setBlockColor(block)
 	end
 end
@@ -295,6 +307,9 @@ end
 		block2.x = block2.x - (speed/2)
 		if (block2.x < -200) then
 			block2.x = block.x + math.random(120 + 20* speed,185 + 21* speed)
+			if (score > 20) then 
+				block2.y = display.contentHeight - 100 + math.random(-19 - speed/2, 30 + speed)
+			end
 			b2c = setBlockColor(block2)
 
 		end
@@ -304,6 +319,9 @@ local function go3( event )
 	block3.x = block3.x - (speed/2)  
 	if (block3.x < -200) then
 		block3.x = block2.x + math.random(120 + 20 * speed,185+ 21* speed)
+		if (score > 20) then 
+			block3.y = display.contentHeight - 100 + math.random(-19 - speed/2, 30 + speed)
+		end
 		b3c = setBlockColor(block3)
 	end
 end
@@ -312,6 +330,9 @@ local function go4( event )
 	block4.x = block4.x - (speed/2)
 	if (block4.x < -200) then 
 		block4.x = block3.x + math.random(120 + 20* speed,185 + 21* speed)
+		if (score > 20) then
+			block4.y = display.contentHeight - 100 + math.random(-19 - speed/2, 30 + speed)
+		end
 		b4c = setBlockColor(block4)
 	end
 end
@@ -439,6 +460,7 @@ end
 function scene:create( event )
 	
 	local sceneGroup = self.view
+	ads.init("admob", "pub-8667480018293512", adListener)
 	physics.setGravity( 0, 17.5)
 	print("creating scene")
 	score1.init()
@@ -469,7 +491,7 @@ function scene:create( event )
 	guy:setFillColor( math.random(0,255)/255,math.random(0,255)/255,math.random(0,255)/255)
 	physics.addBody(guy, {density=1, friction=0, bounce=0 , radius = 25 } );
 	guy.isSleepingAllowed = false
-	backgroundMusic = audio.loadSound("colorBallMusicCorona.mp3")		
+	backgroundMusic = audio.loadSound("colorBallNewMusic.mp3")		
 
 
 	startingBlock = display.newRoundedRect(0 , display.contentHeight - 100, 1000, 50,4)
@@ -499,7 +521,7 @@ function scene:show( event )
 	if ( phase == "will" ) then
 		print("will show")
 		playBackgroundMusic = audio.play(backgroundMusic, {loops = -1, fadein = 500, fadeout = 500, channel = 1})
-		
+		ads.show( "banner", { x=display.contentCenterX, y=0 } )
 	guy.x = 100
 	guy.y = 75
 	startingBlock.x = 0
@@ -590,6 +612,7 @@ function scene:hide( event )
 		--local sceneGroup = self.view
 		--sceneGroup:removeSelf()
 --[		local sceneGroup = self.view
+		ads.hide()
 		if (startingBlock ~= nil) then
 			Runtime:removeEventListener("enterFrame", startBlockGo)
 		end

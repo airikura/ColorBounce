@@ -15,6 +15,20 @@ settings = {
 			UIApplicationExitsOnSuspend = true,
 		}
 	},
+
+	plugins =
+    {
+        ["plugin.google.play.services"] =
+        {
+            publisherId = "com.coronalabs"
+        },
+         -- key is the name passed to Lua's 'require()'
+        ["CoronaProvider.ads.admob"] =
+        {
+            -- required
+            publisherId = "com.coronalabs",
+        },
+    },      
 	
 	--[[ For Android:
 	
