@@ -22,6 +22,8 @@
 		    	label = "New Game",
 		    	onEvent = handleScoreButtonEvent,
 		    	fontSize = 20,
+		    	shape = "roundedRect",
+		    	fillColor = { default={ 1, 0.4, 0.5, 0.7 }, over={ 1, 0.4, 0.5, 1 } },
 		    	labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 } }
 			}
 			scoreButton = widget.newButton
@@ -31,11 +33,13 @@
 		    	id = "scoreButton",
 		    	label = "High Score",
 		    	onEvent = handleButtonEvent,
+		    	shape = "roundedRect",
+		    	fillColor = { default={ 1, 0.4, 0.5, 0.7 }, over={ 1, 0.4, 0.5, 1 } },
 		    	fontSize = 20,
 		    	labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 }}
 			}
 			scoreButton.x = display.contentCenterX 
-			scoreButton.y = display.contentCenterY  + 50
+			scoreButton.y = display.contentCenterY  + 60
 
 			newGame.x = display.contentCenterX
 			newGame.y = display.contentCenterY
@@ -60,13 +64,12 @@
 		   			 local options =
 				{
 				    effect = "fade",
-				    time = 200,
+				    time = 0,
 				    params =
 		 		   {
 		 		   }
 				}
 				print("Button Clicked")
-
 		        composer.gotoScene( "scene1" , options);
 		        return true;
 		  		end
