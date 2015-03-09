@@ -2,14 +2,17 @@ local composer = require ( "composer" )
 local scene = composer.newScene()
 local score1 = require("score")
 local widget = require( "widget" )
+local ads = require("ads")
 local scoreText
 local backgroundMusic
 local playBackgroundMusic
 local menuButton
 
 
+
 function scene:create(event)
 	local sceneGroup = self.view
+	ads.init("admob", "pub-8667480018293512", adListener)
 	scoreText = display.newText(display.contentCenterX, display.contentHeight, 50, "Helvetica", 36)
 	score1.init()
 	backgroundMusic = audio.loadSound("colorBallMenuMusic.mp3")
@@ -33,6 +36,7 @@ end
 function scene:show( event )
 	local phase = event.phase
 	if ( phase == "will" ) then
+		ads.show( "banner", { x=display.contentCenterX, y=0 } )
 		scoreText:setTextColor(0,0,0)
 		scoreText.x = display.contentCenterX
 		scoreText.y = display.contentCenterY -50
@@ -68,6 +72,7 @@ end
 
 function scene:hide( event )
 	--composer:removeScene( "scene3" )
+	ads.hide()
 	audio.stop(playBackgroundMusic)
 	playBackgroundMusic = nil;
 end

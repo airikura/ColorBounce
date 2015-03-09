@@ -2,10 +2,29 @@
 		local scene = composer.newScene()
 		local widget = require( "widget" )
 		local physics = require( "physics" )
+		local score1
 		local newGame
 		local scoreButton 
 		local backgroundMusic
 		local playBackgroundMusic
+		local ads = require("ads")
+
+	--	ads.init("admob", "pub-8667480018293512", adListener)
+	--	ads.show( "banner", { x=0, y=0 } )
+
+
+		local function adListener( event )
+			print("hello")
+    if ( event.isError ) then
+        --Failed to receive an ad
+    end
+end
+
+
+
+
+
+
 		composer.removeOnSceneChange = true
 		print("screen")
 
@@ -13,7 +32,7 @@
 			print("create")
 			
 			local sceneGroup = self.view
-
+			ads.init("admob", "pub-8667480018293512", adListener)
 			newGame = widget.newButton
 			{
 		    	left = 100,
@@ -54,6 +73,7 @@
 			local phase = event.phase
     	if ( phase == "will" ) then
 			playBackgroundMusic = audio.play(backgroundMusic, {loops = -1})
+			ads.show( "banner", { x=display.contentCenterX, y=0 } )
    		elseif ( phase == "did" ) then
    			print("entering scene")
    			composer.removeHidden()
@@ -100,6 +120,7 @@
 			   local sceneGroup = self.view
     	local phase = event.phase
    		 if ( phase == "will" ) then
+   		 	ads.hide()
         -- Called when the scene is on screen (but is about to go off screen).
         -- Insert code here to "pause" the scene.
         -- Example: stop timers, stop animation, stop audio, etc.
