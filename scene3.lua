@@ -11,7 +11,7 @@ local menuButton
 function scene:create(event)
 	local sceneGroup = self.view
 	scoreText = display.newText(display.contentCenterX, display.contentHeight, 50, "Helvetica", 36)
-	
+	score1.init()
 	backgroundMusic = audio.loadSound("colorBallMenuMusic.mp3")
 	menuButton = widget.newButton
 			{
@@ -37,6 +37,7 @@ function scene:show( event )
 		scoreText.x = display.contentCenterX
 		scoreText.y = display.contentCenterY -50
 		playBackgroundMusic = audio.play(backgroundMusic, {loops = -1})
+		print(score1.load())
 		scoreText.text = score1.load()
 		menuButton.x = display.contentCenterX
 		print("in the event!")
