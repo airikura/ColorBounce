@@ -139,11 +139,14 @@ function scene:show( event )
 				if (shouldPlayMusicCheckbox.isOn) then
 					settings.shouldPlayMusic = true
 					saveTable(settings, "gameSettings.json")
-					playBackgroundMusic = audio.play(backgroundMusic, {loops = -1})
+					if (playBackgroundMusic == nil) then
+						playBackgroundMusic = audio.play(backgroundMusic, {loops = -1})
+					end
 				else
 					settings.shouldPlayMusic = false
 					saveTable(settings, "gameSettings.json")
 					audio.stop(playBackgroundMusic)
+					playBackgroundMusic = nil
 				end
 		        return true;
 				end
