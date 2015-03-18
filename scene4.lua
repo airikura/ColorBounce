@@ -3,10 +3,11 @@ local scene = composer.newScene()
 local widget = require ("widget")
 local highScore = {}
 local shouldPlayMusicCheckbox
---local shouldResetHighScore
 local shouldPlayMusicText 
 local backgroundMusic
 local playBackgroundMusic
+local shouldResetHighScoreBox
+local resetHighScoreText
 local confirmButton
 local backButton
 local ads = require("ads")
@@ -27,8 +28,9 @@ function scene:create(event)
    	 	top = 200,
 		style = "checkbox",
 		id = "Checkbox",
-    	onPress = onSwitchPress
 	}
+
+
 
 	confirmButton = widget.newButton
 	{
@@ -43,7 +45,7 @@ function scene:create(event)
 
 	backButton = widget.newButton
 	{
-		left = 0,
+		left = -44,
 		top = 0,
 		label = "back",
 		shape = "roundedRect",
@@ -59,14 +61,21 @@ function scene:create(event)
 	shouldPlayMusicText:setFillColor(.2,.2,.2)
 	shouldPlayMusicText.text = "Play in-game music: "
 	
+	backgroundMusic = audio.loadSound("colorBallMenuMusic.mp3")
 	if (settings.shouldPlayMusic) then
-		backgroundMusic = audio.loadSound("colorBallMenuMusic.mp3")
 		shouldPlayMusicCheckbox:setState{
 		isOn = true
 	}
 	end
 	
-	shouldPlayMusicCheckbox.x = display.contentCenterX + 10
+
+	confirmButton.x = display.contentCenterX
+	confirmButton.y = display.contentCenterY + 80
+
+	shouldPlayMusicText.x = display.contentCenterX - 15
+	shouldPlayMusicText.y = display.contentCenterY
+
+	shouldPlayMusicCheckbox.x = display.contentCenterX + 105
 	shouldPlayMusicCheckbox.y = display.contentCenterY
 	
 	sceneGroup:insert(backButton)
@@ -130,9 +139,11 @@ function scene:show( event )
 				if (shouldPlayMusicCheckbox.isOn) then
 					settings.shouldPlayMusic = true
 					saveTable(settings, "gameSettings.json")
+					playBackgroundMusic = audio.play(backgroundMusic, {loops = -1})
 				else
 					settings.shouldPlayMusic = false
 					saveTable(settings, "gameSettings.json")
+					audio.stop(playBackgroundMusic)
 				end
 		        return true;
 				end
