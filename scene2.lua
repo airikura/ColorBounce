@@ -2,11 +2,14 @@
 		local scene = composer.newScene()
 		local widget = require( "widget" )
 		local physics = require( "physics" )
+		gameSettings = require("gameSettings")
 		local score1
 		local newGame
 		local scoreButton 
 		local backgroundMusic
 		local playBackgroundMusic
+		local settingsButton
+		settings = {}
 		local ads = require("ads")
 
 	--	ads.init("admob", "pub-8667480018293512", adListener)
@@ -30,18 +33,37 @@ end
 
 		function scene:create(event)
 			print("create")
-			
+
 			local sceneGroup = self.view
+
 			ads.init("admob", "pub-8667480018293512", adListener)
+			
+			settings = loadTable("gameSettings.json")
+			if (settings == nil) then 
+				settings = {shouldPlayMusic = false}
+				saveTable(settings,"gameSettings.json")
+			end
 			newGame = widget.newButton
 			{
 		    	left = 100,
 		    	top = 200,
 		    	id = "newGame",
 		    	label = "New Game",
-		    	onEvent = handleScoreButtonEvent,
+		    	onEvent = handleButtonEvent,
 		    	fontSize = 20,
 		    	shape = "roundedRect",
+		    	fillColor = { default={ 1, 0.4, 0.5, 0.7 }, over={ 1, 0.4, 0.5, 1 } },
+		    	labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 } }
+			}
+			settingsButton = widget.newButton
+			{
+				left = 100,
+				top = 200,
+				id = "settingsButton",
+				label = "Settings",
+				onEvent = handleSettingsButtonEvent,
+				fontSize = 20,
+				shape = "roundedRect",
 		    	fillColor = { default={ 1, 0.4, 0.5, 0.7 }, over={ 1, 0.4, 0.5, 1 } },
 		    	labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 } }
 			}
@@ -51,7 +73,7 @@ end
 		    	top = 200,
 		    	id = "scoreButton",
 		    	label = "High Score",
-		    	onEvent = handleButtonEvent,
+		    	onEvent = handleScoreButtonEvent,
 		    	shape = "roundedRect",
 		    	fillColor = { default={ 1, 0.4, 0.5, 0.7 }, over={ 1, 0.4, 0.5, 1 } },
 		    	fontSize = 20,
@@ -59,20 +81,28 @@ end
 			}
 			scoreButton.x = display.contentCenterX 
 			scoreButton.y = display.contentCenterY  + 60
+			
+			settingsButton.x = display.contentWidth - 100
+			settingsButton.y = 100
 
 			newGame.x = display.contentCenterX
 			newGame.y = display.contentCenterY
 
 			sceneGroup:insert(newGame)
 			sceneGroup:insert(scoreButton)
-			backgroundMusic = audio.loadSound("colorBallMenuMusic.mp3")
+			sceneGroup:insert(settingsButton)
+			if (settings.shouldPlayMusic) then
+				backgroundMusic = audio.loadSound("colorBallMenuMusic.mp3")
+			end
 		end
 
 		function scene:show( event )
 			local sceneGroup = self.view
 			local phase = event.phase
     	if ( phase == "will" ) then
-			playBackgroundMusic = audio.play(backgroundMusic, {loops = -1})
+    		if (settings.shouldPlayMusic) then
+				playBackgroundMusic = audio.play(backgroundMusic, {loops = -1})
+			end
 			ads.show( "banner", { x=display.contentCenterX, y=0 } )
    		elseif ( phase == "did" ) then
    			print("entering scene")
@@ -110,6 +140,20 @@ end
 		  	
 				end
 			end
+			local function handleSettingsButtonEvent ( event ) 
+				if (event.phase == "ended" ) then 
+				local options = {
+				effect = "fade",
+				time = 50,
+				params = {
+				}
+				}
+				print ("Settings button clicked")
+				composer.gotoScene( "scene4" , options)
+				return true;
+				end
+			end
+			settingsButton:addEventListener("touch", handleSettingsButtonEvent)
 			scoreButton:addEventListener("touch", handleScoreButtonEvent)
 			newGame:addEventListener("touch", handleButtonEvent)
 		end
@@ -128,8 +172,10 @@ end
 			local sceneGroup = self.view
 			--sceneGroup:removeSelf()
 			--composer.removeScene("scene2")
-			audio.stop(playBackgroundMusic)
-			playBackgroundMusic = nil;
+			--if (settings.shouldPlayMusic) then
+				audio.stop(playBackgroundMusic)
+				playBackgroundMusic = nil;
+			--end
     		elseif ( phase == "did" ) then
    	     -- Called immediately after scene goes off screen.
    			 end
@@ -140,8 +186,10 @@ end
 			local sceneGroup = self.view
 			--sceneGroup:removeSelf()
 			--sceneGroup = nil
-			audio.dispose(backgroundMusic)
-			backgroundMusic = nil;
+		--	if (settings.shouldPlayMusic) then
+				audio.dispose(backgroundMusic)
+				backgroundMusic = nil;
+		--	end
 		end
 
 

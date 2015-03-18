@@ -1,5 +1,7 @@
 local M = {}  --create the local module table (this will hold our functions and data)
 M.score = 0  --set the initial score to 0
+M.shouldPlayMusic = true
+
 function M.init( options )
    local customOptions = options or {}
    local opt = {}
@@ -23,7 +25,7 @@ function M.set( value )
    M.score = value
   -- M.scoreText.text = string.format( M.format, M.score )
 end
-function M.get()
+function M.getScore()
    return M.score
 end
 function M.add( amount )

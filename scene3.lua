@@ -7,6 +7,7 @@ local scoreText
 local backgroundMusic
 local playBackgroundMusic
 local menuButton
+--settings
 
 
 
@@ -15,7 +16,9 @@ function scene:create(event)
 	ads.init("admob", "pub-8667480018293512", adListener)
 	scoreText = display.newText(display.contentCenterX, display.contentHeight, 50, "Helvetica", 36)
 	score1.init()
-	backgroundMusic = audio.loadSound("colorBallMenuMusic.mp3")
+	if (settings.shouldPlayMusic) then
+		backgroundMusic = audio.loadSound("colorBallMenuMusic.mp3")
+	end
 	menuButton = widget.newButton
 			{
 		    left = 100,
@@ -40,7 +43,9 @@ function scene:show( event )
 		scoreText:setTextColor(0,0,0)
 		scoreText.x = display.contentCenterX
 		scoreText.y = display.contentCenterY -50
-		playBackgroundMusic = audio.play(backgroundMusic, {loops = -1})
+		if (settings.shouldPlayMusic) then 
+			playBackgroundMusic = audio.play(backgroundMusic, {loops = -1})
+		end
 		print(score1.load())
 		scoreText.text = score1.load()
 		menuButton.x = display.contentCenterX
@@ -73,16 +78,20 @@ end
 function scene:hide( event )
 	--composer:removeScene( "scene3" )
 	ads.hide()
-	audio.stop(playBackgroundMusic)
-	playBackgroundMusic = nil;
+	if (settings.shouldPlayMusic) then
+		audio.stop(playBackgroundMusic)
+		playBackgroundMusic = nil;
+	end
 end
 
 function scene:destroy( event )
 	print("destroy")
 	--local sceneGroup = self.view
 	--sceneGroup:removeSelf()
-	audio.dispose(backgroundMusic)
-	backgroundMusic = nil;
+	if (settings.shouldPlayMusic) then
+		audio.dispose(backgroundMusic)
+		backgroundMusic = nil;
+	end
 end
 
 

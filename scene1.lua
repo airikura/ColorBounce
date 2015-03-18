@@ -9,6 +9,7 @@ local scoreBox
 local block
 local block2
 local block3
+local blockGuyY
 local block4
 local red
 local blue
@@ -142,16 +143,16 @@ local function endGame()
 end
 
 local function isAlive( event )
-	
+	print(guy.y)
 	--print ("isAlive called")
-	if (guy.y > display.contentHeight or guy.x < 50) then
+	if (guy.y > display.contentHeight or guy.x < -25) then
 		endGame()
 	end
 end
 
 local function movepup (event)
 		powerUp.y =  block.y -500
-		guy:setLinearVelocity( 0  , guy.yVelocity )
+		guy:setLinearVelocity( 0  , guy.y < Velocity )
 	end
 
 	local function spawnPowerUp (event)
@@ -247,7 +248,7 @@ local function go( event )
 		print(block4.x)
 		block.x = block4.x + math.random(115 + 20* speed, 185 + 21* speed)
 		if (score > 20) then
-			block.y = display.contentHeight - 100 + math.random(-19 - speed/2, 30 + speed)
+			block.y = display.contentHeight - 100 - math.random(0, 45 + ((3/2) * speed))
 		end
 		b1c = setBlockColor(block)
 	end
@@ -260,7 +261,8 @@ local function touchHandler( event )
 	print(hasCollided)
 	
 		if event.phase == "began" then
-			if (canJump and hasCollided) then
+			if (canJump and hasCollided and guy.y < blockGuyY + 4) then
+
 			display.getCurrentStage():setFocus( event.target )
 			event.target.isFocus = true
 			--Runtime:addEventListener( "enterFrame", playerGo)
@@ -308,7 +310,7 @@ end
 		if (block2.x < -200) then
 			block2.x = block.x + math.random(120 + 20* speed,185 + 21* speed)
 			if (score > 20) then 
-				block2.y = display.contentHeight - 100 + math.random(-19 - speed/2, 30 + speed)
+				block2.y = display.contentHeight - 100 - math.random(0, 45 + ((3/2) *speed))
 			end
 			b2c = setBlockColor(block2)
 
@@ -320,7 +322,7 @@ local function go3( event )
 	if (block3.x < -200) then
 		block3.x = block2.x + math.random(120 + 20 * speed,185+ 21* speed)
 		if (score > 20) then 
-			block3.y = display.contentHeight - 100 + math.random(-19 - speed/2, 30 + speed)
+			block3.y = display.contentHeight - 100 - math.random(0, 45 + ((3/2)*speed))
 		end
 		b3c = setBlockColor(block3)
 	end
@@ -331,7 +333,7 @@ local function go4( event )
 	if (block4.x < -200) then 
 		block4.x = block3.x + math.random(120 + 20* speed,185 + 21* speed)
 		if (score > 20) then
-			block4.y = display.contentHeight - 100 + math.random(-19 - speed/2, 30 + speed)
+			block4.y = display.contentHeight - 100 - math.random(0, 45 + ((3/2) *speed))
 		end
 		b4c = setBlockColor(block4)
 	end
@@ -371,6 +373,7 @@ end
 
 local function onCollision( event )
 	local shouldEnd = false
+	blockGuyY = guy.y
 	if ( event.phase == "began" ) then
 		if (event.other.myName == "powerUp") then
 			rainbow()
@@ -491,7 +494,10 @@ function scene:create( event )
 	guy:setFillColor( math.random(0,255)/255,math.random(0,255)/255,math.random(0,255)/255)
 	physics.addBody(guy, {density=1, friction=0, bounce=0 , radius = 25 } );
 	guy.isSleepingAllowed = false
-	backgroundMusic = audio.loadSound("colorBallNewMusic.mp3")		
+
+	if (settings.shouldPlayMusic) then 
+		backgroundMusic = audio.loadSound("colorBallNewMusic.mp3")		
+	end
 
 
 	startingBlock = display.newRoundedRect(0 , display.contentHeight - 100, 1000, 50,4)
@@ -520,7 +526,9 @@ function scene:show( event )
 	local phase = event.phase
 	if ( phase == "will" ) then
 		print("will show")
-		playBackgroundMusic = audio.play(backgroundMusic, {loops = -1, fadein = 500, fadeout = 500, channel = 1})
+		if (settings.shouldPlayMusic ) then
+			playBackgroundMusic = audio.play(backgroundMusic, {loops = -1, fadein = 500, fadeout = 500, channel = 1})
+		end
 		ads.show( "banner", { x=display.contentCenterX, y=0 } )
 	guy.x = 100
 	guy.y = 75
@@ -594,13 +602,16 @@ function scene:destroy( event )
 	print("destroy")
 	local sceneGroup = self.view
 	local phase = event.phase
+
    	if ( phase == "will" ) then
 		
 	elseif ( phase == "did" ) then
 		--sceneGroup:removeSelf()
 		--sceneGroup = nil
-		audio.dispose(backgroundMusic)
-		backgroundMusic = nil;
+		--if (settings.shouldPlayMusic) then
+			audio.dispose(backgroundMusic)
+			backgroundMusic = nil;
+		--end
 	end
 end
 
@@ -623,9 +634,10 @@ function scene:hide( event )
 		Runtime:removeEventListener("enterFrame", go3)
 		Runtime:removeEventListener("enterFrame", go4)
 		--composer.removeScene( "scene1" )
-
-		audio.stop(playBackgroundMusic)
-		playBackgroundMusic = nil 
+		--if (settings.shouldPlayMusic) then 
+			audio.stop(playBackgroundMusic)
+			playBackgroundMusic = nil 
+		--end
 		
 		--audio.dispose(backgroundMusic)
 		--backgroundMusic = nil
