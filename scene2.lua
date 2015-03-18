@@ -80,13 +80,13 @@ end
 		    	labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 }}
 			}
 			scoreButton.x = display.contentCenterX 
-			scoreButton.y = display.contentCenterY  + 60
+			scoreButton.y = display.contentCenterY  
 			
-			settingsButton.x = display.contentWidth - 100
-			settingsButton.y = 100
+			settingsButton.x = display.contentCenterX
+			settingsButton.y = display.contentCenterY + 51
 
 			newGame.x = display.contentCenterX
-			newGame.y = display.contentCenterY
+			newGame.y = display.contentCenterY - 51
 
 			sceneGroup:insert(newGame)
 			sceneGroup:insert(scoreButton)
