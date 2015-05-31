@@ -501,7 +501,7 @@ function scene:create( event )
 	end
 
 
-	startingBlock = display.newRoundedRect(0 , display.contentHeight - 100, 1000, 50,4)
+	startingBlock = display.newRoundedRect(0 , display.contentHeight - 100, 1025, 50,4)
 	physics.addBody(startingBlock, "static", {density = 1, friction = 0, bounce = 0});
 	startingBlock:setFillColor( math.random(0,255)/255,math.random(0,255)/255,math.random(0,255)/255)
 
