@@ -31,10 +31,10 @@ local jumpSpeed
 local rLength
 local hasCollided 
 
-			--[[	local gradient = graphics.newGradient(
+				local gradient = graphics.newGradient(
 					{ 1, 0, 0 },
-					{ 0, 0, 1 c},
-					"down" ) --]]
+					{ 0, 0, 1 },
+					"down" ) 
 local pUpRandom 
 local rainbowHappening 
 local canSpawn 
@@ -153,6 +153,8 @@ local function movepup (event)
 		powerUp.y =  block.y -500
 		guy:setLinearVelocity( 0  , guy.y < Velocity )
 	end
+
+
 
 	local function spawnPowerUp (event)
 		pUpRandom = math.random(1,5)
@@ -561,13 +563,24 @@ i = 1
 firsttouch = true
 bcolor = {1,1,1}
 ecolor= {1,1,1}
+
+	powerUp = display.newRect( 1500, block.y - 50, 50, 50 )
+				physics.addBody( powerUp, "static" , {density=0, friction=0, bounce=0 } )
+				powerUp.gravityScale = 0
+				powerUp:setFillColor( gradient )
+				powerUp.myName = "powerUp"
+
+			
+				sceneGroup:insert( powerUp )
+
+spawnPowerUp(); 
 red:addEventListener( "touch", touchHandler)
 blue:addEventListener( "touch", touchHandler)
 green:addEventListener("touch" , touchHandler) 
 guy:addEventListener( "collision",  onCollision)
 
 	Runtime:addEventListener("enterFrame", isAlive)
-	--	Runtime:addEventListener( "enterFrame", pUpGo );
+	Runtime:addEventListener( "enterFrame", pUpGo );
 	Runtime:addEventListener("enterFrame", go)
 	Runtime:addEventListener("enterFrame", go2)
 	Runtime:addEventListener("enterFrame",  go3)
@@ -585,14 +598,7 @@ guy:addEventListener( "collision",  onCollision)
 
 
 
-			--	powerUp = display.newRect( 1500, block.y - 50, 50, 50 )
-			--	physics.addBody( powerUp, "static" , {density=0, friction=0, bounce=0 } )
-		--		powerUp.gravityScale = 0
-		--		powerUp:setFillColor( gradient )
-			--	powerUp.myName = "powerUp"
-
 			
-		--		displayGroup:insert( powerUp )
 		
 	end
 end
