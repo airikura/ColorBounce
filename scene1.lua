@@ -80,6 +80,7 @@ local function checkMemory()
 	local memUsage_str = string.format( "MEMORY = %.3f KB", collectgarbage( "count" ) )
 	print( memUsage_str, "TEXTURE = "..(system.getInfo("textureMemoryUsed") / (1024 * 1024) ) )
 end
+
 timer.performWithDelay( 1000, checkMemory, 0 )
 
 
@@ -127,9 +128,7 @@ end
 local function onComplete( event )
 	if event.action == "clicked" then
 		local i = event.index
-		print (i.. "index isss")
 		if i == 1 then 
-			print("goinggggg")
 			--native.cancelAlert(mAlert)
 			composer.gotoScene("scene2", options)
 		end
@@ -138,7 +137,6 @@ end
 
 local function endGame() 
 	--Runtime:removeEventListener("enterFrame", isAlive)
-	print ("end game called")
 	if ((score1.load() == nil ) or (score > score1.load()))then
 		score1.set(score)
 		score1.save()
@@ -151,7 +149,6 @@ local function endGame()
 end
 
 local function isAlive( event )
-	--print ("isAlive called")
 	if (guy.y > display.contentHeight or guy.x < -25) then
 		endGame()
 	end
@@ -175,7 +172,6 @@ local function movepup (event)
 	end
 
 	local function pUpGo (event)
-		print(powerUp.x);
 		powerUp.x = powerUp.x - (speed/2)
 		if (powerUp.x < -500) then
 			canSpawn = 1
@@ -185,8 +181,6 @@ local function movepup (event)
 local function playerGo(event)
 	if holding then
 		linearVelocityX, linearVelocityY = guy:getLinearVelocity()
-		--print("linearVelocityX = " .. linearVelocityX)
-		--print("linearVelocityY = " .. linearVelocityY)
 		if linearVelocityY > -200 then
 			guy:setLinearVelocity(0,jumpSpeed)
 			jumpSpeed = jumpSpeed - 12
@@ -199,7 +193,6 @@ end
 local function changeColor(event)
 	local tapSound
 	local playTapSound
-	print(event.myName)
 	if (isPoweredUp == true) then 
 		return
 	else if (event.target == red) then
@@ -250,15 +243,12 @@ local function setBlockColor(block)
 
 end
 local function ballRotate(  )
-guy:rotate(5)
-
+	guy:rotate(speed/2)
 end
 local function go( event )
 	
 	block.x = block.x - (speed/2)
 	if (block.x < -200) then
-		print("block 4")
-		print(block4.x)
 		block.x = block4.x + math.random(115 + 20* speed, 185 + 21* speed)
 		if (score > 20) then
 			block.y = display.contentHeight - 100 - math.random(0, 35 + ((3/2) * speed))
@@ -268,16 +258,10 @@ local function go( event )
 end
 
 local function touchHandler( event )
-	print("touchHandler")
-	print(holding)
-	print(canJump)
-	print(hasCollided)
-	
 		if event.phase == "began" then
 			if (canJump and hasCollided and guy.y < blockGuyY + 4) then
-
-			display.getCurrentStage():setFocus( event.target )
-			event.target.isFocus = true
+			--display.getCurrentStage():setFocus( event.target )
+			--event.target.isFocus = true
 			--Runtime:addEventListener( "enterFrame", playerGo)
 			jumpSpeed = -125
 			holding = true
@@ -290,7 +274,6 @@ local function touchHandler( event )
 		elseif event.target.isFocus then
 		if event.phase == "moved" then
 		elseif (event.phase == "ended" or event.phase == "cancelled") then
-		print("hello")
 				holding = false
 				jumpSpeed = -125
 				
@@ -308,7 +291,6 @@ end
 	local function raiseSpeed(newScore)
 		if (newScore > 5) then
 			speed = speed + (2 / (newScore))
-			print(speed)
 		end
 	end
 	function updateScore()
@@ -440,7 +422,6 @@ local function onCollision( event )
 						wasPoweredUp = false
 					end	
 				else 
-					print("shouldEnd")
 					shouldEnd = true
 				end
 
@@ -454,7 +435,6 @@ local function onCollision( event )
 						wasPoweredUp = false
 					end
 				else 
-					print("shouldEnd")
 					shouldEnd = true
 				end
 					
@@ -468,7 +448,6 @@ local function onCollision( event )
 						wasPoweredUp = false
 					end
 				else 
-					print("shouldEnd")
 					shouldEnd = true
 				end
 			elseif (event.other.myName == "block4") then 
@@ -481,12 +460,10 @@ local function onCollision( event )
 						wasPoweredUp = false
 					end
 				else 
-					print ("shouldEnd")
 					shouldEnd = true
 				end
 			end
 		end
-	print("ending")
 	if (shouldEnd) then
 		endGame()
 		end
@@ -519,7 +496,6 @@ function scene:create( event )
 	ads.init("admob", "pub-8667480018293512", adListener)
 	timers = {}
 	physics.setGravity( 0, 17.5)
-	print("creating scene")
 	score1.init()
 	scoreBox = display.newText(0, 450,50, "Helvetica", 36)
 	guy = display.newImage("ball.png", 100, 150, true)
@@ -581,11 +557,10 @@ function scene:show( event )
 	local sceneGroup = self.view
 	local phase = event.phase
 	if ( phase == "will" ) then
-		print("will show")
 		if (settings.shouldPlayMusic ) then
 			playBackgroundMusic = audio.play(backgroundMusic, {loops = -1, fadein = 500, fadeout = 500, channel = 1})
 		end
-		ads.show( "banner", { x=display.contentCenterX, y=0, AppId = bannerAppID } )
+		ads.show( "banner", { x=display.contentCenterX, y=-10000, AppId = bannerAppID } )
 	guy.x = 100
 	guy.y = 75
 	startingBlock.x = 0
@@ -647,9 +622,6 @@ guy:addEventListener( "collision",  onCollision)
 	
 	
 	elseif ( phase == "did" ) then
-
-
-		print("entering scene")
 		composer.removeHidden()
 
 
@@ -660,7 +632,6 @@ guy:addEventListener( "collision",  onCollision)
 end
 
 function scene:destroy( event )
-	print("destroy")
 	local sceneGroup = self.view
 	local phase = event.phase
 
@@ -677,7 +648,6 @@ function scene:destroy( event )
 end
 
 function scene:hide( event )
-	print("exiting")
 	
 	local phase = event.phase
 	if (phase ==  "will") then 
