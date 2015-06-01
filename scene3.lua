@@ -43,7 +43,7 @@ end
 function scene:show( event )
 	local phase = event.phase
 	if ( phase == "will" ) then
-		ads.show( "banner", { x=display.contentCenterX, y=0, appId = bannerAppID} )
+		ads.show( "banner", { x=0, y=100000, appId = bannerAppID} )
 		scoreText:setTextColor(0,0,0)
 		scoreText.x = display.contentCenterX
 		scoreText.y = display.contentCenterY -50
