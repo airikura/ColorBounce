@@ -3,6 +3,9 @@ local scene = composer.newScene()
 composer.removeOnSceneChange = true
 local physics = require( "physics")
 local ads = require("ads")
+local ads = require("ads")
+local bannerAppID
+local publisherID
 physics.start(nosleep);
 local score1 = require( "score" )
 local scoreBox
@@ -54,6 +57,7 @@ local playBackgroundMusic
 
 
 
+
 local options =
 {
 	effect = "fade",
@@ -67,15 +71,16 @@ local function adListener( event )
 			print("hello")
     if ( event.isError ) then
         --Failed to receive an ad
+
     end
 end
 
---local function checkMemory()
---	collectgarbage( "collect" )
---	local memUsage_str = string.format( "MEMORY = %.3f KB", collectgarbage( "count" ) )
---	print( memUsage_str, "TEXTURE = "..(system.getInfo("textureMemoryUsed") / (1024 * 1024) ) )
---end
---timer.performWithDelay( 1000, checkMemory, 0 )
+local function checkMemory()
+	collectgarbage( "collect" )
+	local memUsage_str = string.format( "MEMORY = %.3f KB", collectgarbage( "count" ) )
+	print( memUsage_str, "TEXTURE = "..(system.getInfo("textureMemoryUsed") / (1024 * 1024) ) )
+end
+timer.performWithDelay( 1000, checkMemory, 0 )
 
 
 
@@ -509,6 +514,8 @@ end
 function scene:create( event )
 	
 	local sceneGroup = self.view
+	publisherID = "pub-8667480018293512"
+	bannerAppID = "ca-app-pub-8667480018293512/2536023388"
 	ads.init("admob", "pub-8667480018293512", adListener)
 	timers = {}
 	physics.setGravity( 0, 17.5)
@@ -578,7 +585,7 @@ function scene:show( event )
 		if (settings.shouldPlayMusic ) then
 			playBackgroundMusic = audio.play(backgroundMusic, {loops = -1, fadein = 500, fadeout = 500, channel = 1})
 		end
-		ads.show( "banner", { x=display.contentCenterX, y=0 } )
+		ads.show( "banner", { x=display.contentCenterX, y=0, AppId = bannerAppID } )
 	guy.x = 100
 	guy.y = 75
 	startingBlock.x = 0

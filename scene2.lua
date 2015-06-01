@@ -105,7 +105,7 @@ end
     		if (settings.shouldPlayMusic) then
 				playBackgroundMusic = audio.play(backgroundMusic, {loops = -1})
 			end
-			ads.show( "banner", { x=display.contentCenterX, y=0, appId = bannerAppID } )
+			ads.show( "banner", { x=0, y=10000, appId = bannerAppID } )
    		elseif ( phase == "did" ) then
    			print("entering scene")
    			composer.removeHidden()
