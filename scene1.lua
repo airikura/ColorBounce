@@ -182,7 +182,7 @@ local function playerGo(event)
 	if holding then
 		linearVelocityX, linearVelocityY = guy:getLinearVelocity()
 		if linearVelocityY > -200 then
-			guy:setLinearVelocity(0,jumpSpeed)
+			guy:setLinearVelocity(linearVelocityX,jumpSpeed)
 			jumpSpeed = jumpSpeed - 12
 		else
 			holding = false
