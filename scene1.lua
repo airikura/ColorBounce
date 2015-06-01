@@ -18,6 +18,7 @@ local guy
 local rightWall
 local topWall
 local powerUp
+local timers
 local isPoweredUp
 local wasPoweredUp 
 local canJump 
@@ -378,6 +379,17 @@ local function endPowerUp( event )
 	isPoweredUp = false
 	wasPoweredUp = true
 	--SET COLOR BACK
+	if (gc == 1) then 
+		--set red
+		guy:setFillColor(225/255,105/225,97/225)
+	elseif (gc == 2) then 
+		--set blue
+		guy:setFillColor(119/255,158/255,203/255)
+	else if (gc == 3) then
+		--set green
+		guy:setFillColor(119/255,190/255,119/255)
+	end
+end
 end
 
 local function respawnPowerUp( event ) 
@@ -392,10 +404,12 @@ local function onCollision( event )
 		if (event.other.myName == "powerUp") then
 			rainbow()
 			--SET COLOR OF BLOCK HERE 
+			guy:setFillColor(255,255,255)
 			isPoweredUp = true
 			wasPoweredUp = true
 			timer.performWithDelay(50, respawnPowerUp, 1)
-			timer.performWithDelay(7000, endPowerUp, 1)
+			timers[0] = timer.performWithDelay(7000, endPowerUp, 1)
+
 			--Runtime:removeEventListener("enterFrame", pUpGo)
 			--powerUp:removeSelf()
 		end
@@ -493,6 +507,7 @@ function scene:create( event )
 	
 	local sceneGroup = self.view
 	ads.init("admob", "pub-8667480018293512", adListener)
+	timers = {}
 	physics.setGravity( 0, 17.5)
 	print("creating scene")
 	score1.init()
@@ -669,6 +684,9 @@ function scene:hide( event )
 		Runtime:removeEventListener("enterFrame", go3)
 		Runtime:removeEventListener("enterFrame", go4)
 		Runtime:removeEventListener("enterFrame", pUpGo); 
+		if (timers[0] ~= nil) then 
+			timer.cancel(timers[0])
+		end
 		--composer.removeScene( "scene1" )
 		--if (settings.shouldPlayMusic) then 
 			audio.stop(playBackgroundMusic)
