@@ -245,7 +245,7 @@ local function setBlockColor(block)
 end
 
 local function go( event )
-	
+	guy:rotate(5)
 	block.x = block.x - (speed/2)
 	if (block.x < -200) then
 		print("block 4")
@@ -497,6 +497,8 @@ function scene:create( event )
 	print("creating scene")
 	score1.init()
 	scoreBox = display.newText(0, 450,50, "Helvetica", 36)
+	guy = display.newImage("ball.png", 100, 150, true)
+	guy.scale(.25,.25)
 	block = display.newRoundedRect(700 , display.contentHeight - 100, 150, 50,4)
 	block.myName ="block"
 	b1c = setBlockColor(block)
