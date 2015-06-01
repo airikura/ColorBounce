@@ -11,6 +11,8 @@ local resetHighScoreText
 local confirmButton
 local backButton
 local ads = require("ads")
+local publisherID
+local bannerAppID
 
 --[[local function onPressCheck( event )
     local switch = event.target
@@ -19,7 +21,9 @@ end--]]
 
 function scene:create(event)
 	local sceneGroup = self.view
-	ads.init("admob", "pub-8667480018293512", adListener)
+	publisherID = "pub-8667480018293512"
+	bannerAppID = "ca-app-pub-8667480018293512/1059290188"
+	ads.init("admob", publisherID, adListener)
 	-- Handle press events for the checkbox
 -- Create the widget
 	shouldPlayMusicCheckbox = widget.newSwitch
@@ -93,7 +97,7 @@ function scene:show( event )
     		if (settings.shouldPlayMusic) then
 				playBackgroundMusic = audio.play(backgroundMusic, {loops = -1})
 			end
-			ads.show( "banner", { x=display.contentCenterX, y=0 } )
+			ads.show( "banner", { x=display.contentCenterX, y=0, AppId = bannerAppID} )
    		elseif ( phase == "did" ) then
    			composer.removeHidden()
    			local function handleCheckboxEvent( event )

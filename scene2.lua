@@ -10,7 +10,9 @@
 		local playBackgroundMusic
 		local settingsButton
 		settings = {}
-		local ads = require("ads")
+		local ads = require( "ads" )
+		local bannerAppID
+		local publisherID
 
 	--	ads.init("admob", "pub-8667480018293512", adListener)
 	--	ads.show( "banner", { x=0, y=0 } )
@@ -35,9 +37,9 @@ end
 			print("create")
 
 			local sceneGroup = self.view
-
-			ads.init("admob", "pub-8667480018293512", adListener)
-			
+			local publisherID = "pub-8667480018293512"
+			local bannerAppID = "ca-app-pub-8667480018293512/1059290188"
+			ads.init("admob", publisherID, adListener)
 			settings = loadTable("gameSettings.json")
 			if (settings == nil) then 
 				settings = {shouldPlayMusic = false}
@@ -103,7 +105,7 @@ end
     		if (settings.shouldPlayMusic) then
 				playBackgroundMusic = audio.play(backgroundMusic, {loops = -1})
 			end
-			ads.show( "banner", { x=display.contentCenterX, y=0 } )
+			ads.show( "banner", { x=display.contentCenterX, y=0, appId = bannerAppID } )
    		elseif ( phase == "did" ) then
    			print("entering scene")
    			composer.removeHidden()
