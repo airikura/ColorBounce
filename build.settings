@@ -23,11 +23,7 @@ settings = {
             publisherId = "com.coronalabs"
         },
          -- key is the name passed to Lua's 'require()'
-        ["CoronaProvider.ads.admob"] =
-        {
-            -- required
-            publisherId = "com.coronalabs",
-        },
+        
     },      
 	
 	--[[ For Android:
