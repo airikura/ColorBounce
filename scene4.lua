@@ -47,11 +47,13 @@ function scene:create(event)
 	{
 		left = -44,
 		top = 0,
-		label = "back",
-		shape = "roundedRect",
-		fillColor = { default={ 1, 0.4, 0.5, 0.7 }, over={ 1, 0.4, 0.5, 1 } },
-		fontSize = 20,
-		labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 }}
+		defaultFile = "back.png",
+
+		--label = "back",
+		--shape = "roundedRect",
+		--fillColor = { default={ 1, 0.4, 0.5, 0.7 }, over={ 1, 0.4, 0.5, 1 } },
+		--fontSize = 20,
+		--labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 }}
 	}
 
 
