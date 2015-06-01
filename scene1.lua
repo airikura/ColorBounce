@@ -198,26 +198,26 @@ local function changeColor(event)
 		return
 	else if (event.target == red) then
 		gc = 1
-		guy:setFillColor(.8,0,0)
-		bcolor[0] = .8
-		bcolor[1] = 0
-		bcolor[2] = 0
+		guy:setFillColor(225/255,105/225,97/225)
+		bcolor[0] = 225/255
+		bcolor[1] = 105/225
+		bcolor[2] = 97/225
 		tapSound = audio.loadSound("tapRed.mp3" )
 
 		elseif (event.target == green) then
 			gc = 3
-			guy:setFillColor(0,.8,0)
-			bcolor[0] = 0
-			bcolor[1] = .8
-			bcolor[2] = 0
+			guy:setFillColor(119/255,190/255,119/255)
+			bcolor[0] = 119/255
+			bcolor[1] = 190/255
+			bcolor[2] = 119/255
 			tapSound = audio.loadSound("tapGreen.mp3" )
 		
 		elseif (event.target == blue) then
 				gc = 2
-				guy:setFillColor(0,0,0.8)
-				bcolor[0] = 0
-				bcolor[1] = 0
-				bcolor[2] = .8
+				guy:setFillColor(119/255,158/255,203/255)
+				bcolor[0] = 119/255
+				bcolor[1] = 158/255
+				bcolor[2] = 203/255
 				tapSound = audio.loadSound("tapBlue.mp3")
 		end
 
@@ -232,13 +232,13 @@ local function setBlockColor(block)
 		randomNumber = math.random(1,3)
 
 		if (randomNumber == 1) then
-			block:setFillColor(.7,0,0 )
+			block:setFillColor(225/255,105/255,97/255 )
 
 		elseif (randomNumber == 2) then
-			block:setFillColor( 0,0,.7 )
+			block:setFillColor( 119/255,158/255,203/255)
 
 		elseif (randomNumber == 3) then
-			block:setFillColor( 0,.7,0 )
+			block:setFillColor( 119/255,190/255,119/255)
 		end
 	return randomNumber;
 
@@ -498,7 +498,7 @@ function scene:create( event )
 	score1.init()
 	scoreBox = display.newText(0, 450,50, "Helvetica", 36)
 	guy = display.newImage("ball.png", 100, 150, true)
-	guy.scale(.25,.25)
+	guy:scale(.25,.25)
 	block = display.newRoundedRect(700 , display.contentHeight - 100, 150, 50,4)
 	block.myName ="block"
 	b1c = setBlockColor(block)
@@ -516,13 +516,13 @@ function scene:create( event )
 	block4.myName= "block4"
 	b4c = setBlockColor(block4);
 	red = display.newCircle(display.contentWidth/6, display.contentHeight * .87, 25 )
-	red:setFillColor(.8, 0, 0)
+	red:setFillColor(225/255, 105/225, 97/225)
 	blue = display.newCircle(display.contentWidth/ 2, display.contentHeight * .87, 25 )
-	blue:setFillColor(0, 0, .8)
+	blue:setFillColor(119/255,158/255,203/255)
 	green = display.newCircle((display.contentWidth * 5)/6, display.contentHeight * .87, 25 )
-	green:setFillColor(0, .8, 0)
-	guy = display.newCircle( 100, 150, 25 )
-	guy:setFillColor( math.random(0,255)/255,math.random(0,255)/255,math.random(0,255)/255)
+	green:setFillColor(119/255,190/255,119/255)
+	--guy = display.newCircle( 100, 150, 25 )
+	--guy:setFillColor( math.random(0,255)/255,math.random(0,255)/255,math.random(0,255)/255)
 	physics.addBody(guy, {density=1, friction=0, bounce=0 , radius = 25 } );
 	guy.isSleepingAllowed = false
 
