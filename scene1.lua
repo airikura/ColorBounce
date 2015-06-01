@@ -244,9 +244,12 @@ local function setBlockColor(block)
 	return randomNumber;
 
 end
+local function ballRotate(  )
+guy:rotate(5)
 
+end
 local function go( event )
-	guy:rotate(5)
+	
 	block.x = block.x - (speed/2)
 	if (block.x < -200) then
 		print("block 4")
@@ -632,6 +635,7 @@ guy:addEventListener( "collision",  onCollision)
 	Runtime:addEventListener("enterFrame", go4)
 	Runtime:addEventListener("enterFrame", startBlockGo)
 	Runtime:addEventListener("enterFrame", playerGo)
+	Runtime:addEventListener("enterFrame", ballRotate)
 
 	
 	
@@ -684,6 +688,8 @@ function scene:hide( event )
 		Runtime:removeEventListener("enterFrame", go3)
 		Runtime:removeEventListener("enterFrame", go4)
 		Runtime:removeEventListener("enterFrame", pUpGo); 
+		Runtime:removeEventListener("enterFrame", ballRotate); 
+
 		if (timers[0] ~= nil) then 
 			timer.cancel(timers[0])
 		end
