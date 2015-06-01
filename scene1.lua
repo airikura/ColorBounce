@@ -18,6 +18,8 @@ local guy
 local rightWall
 local topWall
 local powerUp
+local isPoweredUp
+local wasPoweredUp 
 local canJump 
 local b1c
 local b2c 
@@ -150,10 +152,9 @@ local function isAlive( event )
 end
 
 local function movepup (event)
-		powerUp.y =  block.y -500
+		powerUp.y =  block.y - 300
 		guy:setLinearVelocity( 0  , guy.y < Velocity )
 	end
-
 
 
 	local function spawnPowerUp (event)
@@ -162,17 +163,17 @@ local function movepup (event)
 			if (canSpawn == 1) then
 				canSpawn = 0
 				powerUp.x = 700
-				powerUp.y =  block.y -50
+				powerUp.y =  block.y - 125; 
 			end
 		end
 	end
 
 	local function pUpGo (event)
-		powerUp.x = powerUp.x - 5 
+		print(powerUp.x);
+		powerUp.x = powerUp.x - (speed/2)
 		if (powerUp.x < -500) then
 			canSpawn = 1
 		end
-
 	end
 
 local function playerGo(event)
@@ -193,8 +194,9 @@ local function changeColor(event)
 	local tapSound
 	local playTapSound
 	print(event.myName)
-
-	if (event.target == red) then
+	if (isPoweredUp == true) then 
+		return
+	else if (event.target == red) then
 		gc = 1
 		guy:setFillColor(.8,0,0)
 		bcolor[0] = .8
@@ -224,6 +226,7 @@ local function changeColor(event)
 			playtapSound = nil
 			tapSound = nil
 	end
+end
 
 local function setBlockColor(block)
 		randomNumber = math.random(1,3)
@@ -371,6 +374,16 @@ local function explode (event)
 	
 end
 
+local function endPowerUp( event )
+	isPoweredUp = false
+	wasPoweredUp = true
+	--SET COLOR BACK
+end
+
+local function respawnPowerUp( event ) 
+	powerUp.x = 5000 + math.random(speed,  10 * speed); 
+end
+
 
 local function onCollision( event )
 	local shouldEnd = false
@@ -378,8 +391,13 @@ local function onCollision( event )
 	if ( event.phase == "began" ) then
 		if (event.other.myName == "powerUp") then
 			rainbow()
-			Runtime:removeEventListener( "enterFrame", pUpGo )
-			powerUp:removeSelf()
+			--SET COLOR OF BLOCK HERE 
+			isPoweredUp = true
+			wasPoweredUp = true
+			timer.performWithDelay(50, respawnPowerUp, 1)
+			timer.performWithDelay(7000, endPowerUp, 1)
+			--Runtime:removeEventListener("enterFrame", pUpGo)
+			--powerUp:removeSelf()
 		end
 		--if (Math.guy.x == 100) then
 		hasCollided = true
@@ -391,44 +409,55 @@ local function onCollision( event )
 			ecolor[2] = bcolor[2]
 
 			if (event.other.myName == "block") then
-				if (b1c == gc) then
+				if (b1c == gc or wasPoweredUp) then
 					timer.performWithDelay(10, explode, 15)
 					i = 1
 					updateScore()
-					firsttouch = false	
+					firsttouch = false
+					if (isPoweredUp == false) then
+						wasPoweredUp = false
+					end	
 				else 
 					print("shouldEnd")
 					shouldEnd = true
 				end
 
 			elseif (event.other.myName == "block2") then
-				if (b2c == gc) then
+				if (b2c == gc or wasPoweredUp) then
 					timer.performWithDelay(10, explode, 15)
 					i = 1
 					updateScore()
-					firsttouch = false	
-				
+					firsttouch = false
+					if (isPoweredUp == false) then
+						wasPoweredUp = false
+					end
 				else 
 					print("shouldEnd")
 					shouldEnd = true
 				end
 					
 			elseif (event.other.myName == "block3") then
-				if (b3c == gc) then
+				if (b3c == gc or wasPoweredUp) then
 					timer.performWithDelay(10, explode, 15)
 					i = 1
 					updateScore()
 					firsttouch = false	
+					if (isPoweredUp == false) then
+						wasPoweredUp = false
+					end
 				else 
 					print("shouldEnd")
 					shouldEnd = true
 				end
 			elseif (event.other.myName == "block4") then 
-				if (b4c == gc) then 
+				if (b4c == gc or wasPoweredUp) then 
 					timer.performWithDelay(10, explode, 15)
 					i = 1
 					updateScore()
 					firsttouch = false
+					if (isPoweredUp == false) then
+						wasPoweredUp = false
+					end
 				else 
 					print ("shouldEnd")
 					shouldEnd = true
@@ -441,7 +470,6 @@ local function onCollision( event )
 		end
 		elseif ( event.phase == "ended" ) then  
 
-			
 		end
 end
 
@@ -539,6 +567,7 @@ function scene:show( event )
 	block3.x = 1200
 	block4.x = 1450
 
+	isPoweredUp = false 
 	hasCollided = false
 	canJump = false
 	gc = -1
@@ -564,13 +593,12 @@ firsttouch = true
 bcolor = {1,1,1}
 ecolor= {1,1,1}
 
-	powerUp = display.newRect( 1500, block.y - 50, 50, 50 )
-				physics.addBody( powerUp, "static" , {density=0, friction=0, bounce=0 } )
+	powerUp = display.newRect( 1525, block.y - 125, 50, 50 )
+				physics.addBody( powerUp, "dynamic" , {density=0, friction=0, bounce=0 } )
 				powerUp.gravityScale = 0
 				powerUp:setFillColor( gradient )
 				powerUp.myName = "powerUp"
-
-			
+				powerUp.isSensor = true
 				sceneGroup:insert( powerUp )
 
 spawnPowerUp(); 
@@ -638,6 +666,7 @@ function scene:hide( event )
 		Runtime:removeEventListener("enterFrame", go2)
 		Runtime:removeEventListener("enterFrame", go3)
 		Runtime:removeEventListener("enterFrame", go4)
+		Runtime:removeEventListener("enterFrame", pUpGo); 
 		--composer.removeScene( "scene1" )
 		--if (settings.shouldPlayMusic) then 
 			audio.stop(playBackgroundMusic)
