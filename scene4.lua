@@ -55,7 +55,7 @@ function scene:create(event)
 		--fontSize = 20,
 		--labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 }}
 	}
-
+	backButton:scale( .5, .5 )
 
 
 
