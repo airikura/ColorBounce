@@ -75,11 +75,11 @@ local function adListener( event )
     end
 end
 
-local function checkMemory()
-	collectgarbage( "collect" )
-	local memUsage_str = string.format( "MEMORY = %.3f KB", collectgarbage( "count" ) )
-	print( memUsage_str, "TEXTURE = "..(system.getInfo("textureMemoryUsed") / (1024 * 1024) ) )
-end
+--local function checkMemory()
+--	collectgarbage( "collect" )
+--	local memUsage_str = string.format( "MEMORY = %.3f KB", collectgarbage( "count" ) )
+--	print( memUsage_str, "TEXTURE = "..(system.getInfo("textureMemoryUsed") / (1024 * 1024) ) )
+--end
 
 timer.performWithDelay( 1000, checkMemory, 0 )
 
@@ -386,6 +386,35 @@ local function respawnPowerUp( event )
 	powerUp.x = 5000 + math.random(speed,  10 * speed); 
 end
 
+local function distance(obj1X, obj1Y, obj2X, obj2Y) 
+	local dist = math.sqrt((obj1X - obj2X)^2 + (obj1Y - obj2Y)^2)
+	return dist
+end
+
+local function handleSwipe (event)
+	print(event.phase)
+	if (event.phase == "moved") then 
+
+		--if dX is greater than 10, then we consider it a swipe
+		print("DXY EQUALS ====== ")
+		print(distance(event.xStart, event.yStart, event.x, event.y))
+		if (distance(event.xStart, event.yStart, event.x, event.y) > 10) then 
+				print("GUY DISTANCE EQUALS ====")
+				print(distance(guy.x, guy.y, event.x, event.y))
+				if (distance(guy.x, guy.y, event.x, event.y) < 15) then 
+
+			--SET COLOR OF BLOCK HERE 
+				guy:setFillColor(255,255,255)
+				isPoweredUp = true
+				wasPoweredUp = true
+				timer.performWithDelay(50, respawnPowerUp, 1)
+				timers[0] = timer.performWithDelay(7000, endPowerUp, 1)
+			end
+		end
+	end
+		
+end
+
 
 local function onCollision( event )
 	local shouldEnd = false
@@ -420,7 +449,11 @@ local function onCollision( event )
 					firsttouch = false
 					if (isPoweredUp == false) then
 						wasPoweredUp = false
-					end	
+					
+					--If isPoweredUp, updateScore twice
+					else
+						updateScore()
+					end
 				else 
 					shouldEnd = true
 				end
@@ -433,6 +466,10 @@ local function onCollision( event )
 					firsttouch = false
 					if (isPoweredUp == false) then
 						wasPoweredUp = false
+					
+					--If isPoweredUp, updateScore twice
+					else 
+						updateScore()
 					end
 				else 
 					shouldEnd = true
@@ -446,6 +483,10 @@ local function onCollision( event )
 					firsttouch = false	
 					if (isPoweredUp == false) then
 						wasPoweredUp = false
+					
+					--If isPoweredUp, updateScore twice
+					else 
+						updateScore()
 					end
 				else 
 					shouldEnd = true
@@ -458,6 +499,10 @@ local function onCollision( event )
 					firsttouch = false
 					if (isPoweredUp == false) then
 						wasPoweredUp = false
+					
+					--If isPoweredUp, updateScore twice
+					else 
+						updateScore()
 					end
 				else 
 					shouldEnd = true
@@ -595,7 +640,7 @@ firsttouch = true
 bcolor = {1,1,1}
 ecolor= {1,1,1}
 
-	powerUp = display.newRect( 1525, block.y - 125, 50, 50 )
+	powerUp = display.newRect( math.random(1500, 2200), block.y - 125, 50, 50 )
 				physics.addBody( powerUp, "dynamic" , {density=0, friction=0, bounce=0 } )
 				powerUp.gravityScale = 0
 				powerUp:setFillColor( gradient )
@@ -608,6 +653,7 @@ red:addEventListener( "touch", touchHandler)
 blue:addEventListener( "touch", touchHandler)
 green:addEventListener("touch" , touchHandler) 
 guy:addEventListener( "collision",  onCollision)
+powerUp:addEventListener("touch", handleSwipe)
 
 	Runtime:addEventListener("enterFrame", isAlive)
 	Runtime:addEventListener( "enterFrame", pUpGo );
