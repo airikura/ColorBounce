@@ -179,6 +179,8 @@ local function movepup (event)
 	end
 
 local function playerGo(event)
+	linearVelocityX, linearVelocityY = guy:getLinearVelocity()
+	guy:setLinearVelocity(0, linearVelocityY)
 	if holding then
 		linearVelocityX, linearVelocityY = guy:getLinearVelocity()
 		if linearVelocityY > -200 then
@@ -572,8 +574,8 @@ function scene:create( event )
 	physics.addBody(guy, {density=1, friction=0, bounce=0 , radius = 25 } );
 	guy.isSleepingAllowed = false
 
-	if (settings.shouldPlayMusic) then 
-		backgroundMusic = audio.loadSound("CoronaMusicNew1.mp3")		
+	if (settings.shouldPlayMusic) then
+		backgroundMusic = audio.loadSound("CoronaMusicNew1.mp3")
 	end
 
 
@@ -605,7 +607,7 @@ function scene:show( event )
 		if (settings.shouldPlayMusic ) then
 			playBackgroundMusic = audio.play(backgroundMusic, {loops = -1, fadein = 500, fadeout = 500, channel = 1})
 		end
-		ads.show( "banner", { x=display.contentCenterX, y=-10000, AppId = bannerAppID } )
+		ads.show( "banner", { x=0, y=-10000, appId = bannerAppID } )
 	guy.x = 100
 	guy.y = 75
 	startingBlock.x = 0
