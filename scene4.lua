@@ -97,7 +97,7 @@ function scene:show( event )
     		if (settings.shouldPlayMusic) then
 				playBackgroundMusic = audio.play(backgroundMusic, {loops = -1})
 			end
-			ads.show( "banner", { x=display.contentCenterX, y=0, AppId = bannerAppID} )
+			ads.show( "banner", { x=display.contentCenterX, y=0, appId = bannerAppID} )
    		elseif ( phase == "did" ) then
    			composer.removeHidden()
    			local function handleCheckboxEvent( event )
