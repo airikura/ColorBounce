@@ -417,8 +417,23 @@ local function handleSwipe (event)
 		
 end
 
+local function speedUp() 
+	linearVelocityX, linearVelocityY = guy:getLinearVelocity()
+	while (linearVelocityX < 0) do
+		linearVelocityX, linearVelocityY = guy:getLinearVelocity()
+		guy:setLinearVelocity(linearVelocityX + .01, linearVelocityY)
+	end
+	while (guy.x < 100) do 
+		if (guy.y > 50) then
+			return
+		end
+		guy.x = guy.x + .1
+	end
+end
+
 
 local function onCollision( event )
+	print("Colliding")
 	local shouldEnd = false
 	blockGuyY = guy.y
 	if ( event.phase == "began" ) then
@@ -430,7 +445,7 @@ local function onCollision( event )
 			wasPoweredUp = true
 			timer.performWithDelay(50, respawnPowerUp, 1)
 			timers[0] = timer.performWithDelay(7000, endPowerUp, 1)
-
+			return
 			--Runtime:removeEventListener("enterFrame", pUpGo)
 			--powerUp:removeSelf()
 		end
@@ -438,6 +453,7 @@ local function onCollision( event )
 		hasCollided = true
 		canJump = true
 		--end
+		timer.performWithDelay(600, speedUp, 1)
 		if (firsttouch) then
 			ecolor[0] = bcolor[0]
 			ecolor[1] = bcolor[1]
