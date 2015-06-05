@@ -137,7 +137,6 @@ local function onComplete( event )
 end
 
 local function endGame() 
-	
 	if ((score1.load() == nil ) or (score > score1.load()))then
 		score1.set(score)
 		score1.save()
@@ -150,7 +149,7 @@ local function endGame()
 end
 
 local function isAlive( event )
-	if (guy.y > display.contentHeight or guy.x < -25) then
+	if ((guy.y > display.contentHeight or guy.x < -25) and not(shouldEnd)) then
 		Runtime:removeEventListener("enterFrame", isAlive)
 		endGame()
 	end
@@ -253,7 +252,6 @@ end
 local function playerGo(event)
 	--linearVelocityX, linearVelocityY = guy:getLinearVelocity()
 	--guy:setLinearVelocity(0, linearVelocityY)
-	print(guy.y)
 	if holding then
 		linearVelocityX, linearVelocityY = guy:getLinearVelocity()
 		if linearVelocityY > -200 then
@@ -538,7 +536,10 @@ local function onCollision( event )
 				end
 			end
 		end
-	if (shouldEnd and (guy.y > display.contentHeight * .87 or guy.x < -25)) then
+	if (shouldEnd and (guy.y <= display.contentHeight - 95 or guy.x < -25)) then
+		print(guy.y)
+		print(display.contentHeight * .88)
+		Runtime:removeEventListener("enterFrame", isAlive)
 		endGame()
 		end
 		elseif ( event.phase == "ended" ) then  
@@ -659,6 +660,7 @@ function scene:show( event )
 	block4.x = 1450
 
 	isPoweredUp = false 
+	wasPoweredUp = false
 	hasCollided = false
 	canJump = false
 	gc = -1
