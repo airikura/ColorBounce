@@ -14,6 +14,7 @@
 		local bannerAppID
 		local publisherID
 
+
 	--	ads.init("admob", "pub-8667480018293512", adListener)
 	--	ads.show( "banner", { x=0, y=0 } )
 
@@ -35,7 +36,7 @@ end
 
 		function scene:create(event)
 			print("create")
-
+			number = 0
 			local sceneGroup = self.view
 			local publisherID = "pub-8667480018293512"
 			local bannerAppID = "ca-app-pub-8667480018293512/1059290188"
@@ -101,6 +102,7 @@ end
 		function scene:show( event )
 			local sceneGroup = self.view
 			local phase = event.phase
+			number = number + 1
     	if ( phase == "will" ) then
     		if (settings.shouldPlayMusic) then
 				playBackgroundMusic = audio.play(backgroundMusic, {loops = -1})
