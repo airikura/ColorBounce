@@ -5,6 +5,7 @@ local physics = require( "physics")
 local ads = require("ads")
 local ads = require("ads")
 local bannerAppID
+local interstitialAppID
 local publisherID
 physics.start(nosleep);
 local score1 = require( "score" )
@@ -136,7 +137,7 @@ local function onComplete( event )
 end
 
 local function endGame() 
-	--Runtime:removeEventListener("enterFrame", isAlive)
+	
 	if ((score1.load() == nil ) or (score > score1.load()))then
 		score1.set(score)
 		score1.save()
@@ -150,6 +151,7 @@ end
 
 local function isAlive( event )
 	if (guy.y > display.contentHeight or guy.x < -25) then
+		Runtime:removeEventListener("enterFrame", isAlive)
 		endGame()
 	end
 end
@@ -178,19 +180,8 @@ local function movepup (event)
 		end
 	end
 
-local function playerGo(event)
-	linearVelocityX, linearVelocityY = guy:getLinearVelocity()
-	guy:setLinearVelocity(0, linearVelocityY)
-	if holding then
-		linearVelocityX, linearVelocityY = guy:getLinearVelocity()
-		if linearVelocityY > -200 then
-			guy:setLinearVelocity(linearVelocityX,jumpSpeed)
-			jumpSpeed = jumpSpeed - 12
-		else
-			holding = false
-		end
-	end
-end
+
+
 
 local function changeColor(event)
 	local tapSound
@@ -259,33 +250,66 @@ local function go( event )
 	end
 end
 
+local function playerGo(event)
+	--linearVelocityX, linearVelocityY = guy:getLinearVelocity()
+	--guy:setLinearVelocity(0, linearVelocityY)
+	print(guy.y)
+	if holding then
+		linearVelocityX, linearVelocityY = guy:getLinearVelocity()
+		if linearVelocityY > -200 then
+			guy:applyForce(0,jumpSpeed, guy.x, guy.y)
+			jumpSpeed = jumpSpeed - 12
+		else
+			holding = false
+		end
+	end
+end
+
+
+
+
 local function touchHandler( event )
-		if event.phase == "began" then
-			if (canJump and hasCollided and guy.y < blockGuyY + 4) then
-			--display.getCurrentStage():setFocus( event.target )
+	if event.phase == "began" then
+		if (canJump and hasCollided and guy.y < blockGuyY + 4) then
+			display.getCurrentStage():setFocus(event.target)
+			event.target.isFocus = true
 			--event.target.isFocus = true
 			--Runtime:addEventListener( "enterFrame", playerGo)
-			jumpSpeed = -125
+			jumpSpeed = -175
 			holding = true
 			firsttouch = true
 			canJump = false
 			hasCollided = false
+			guy:applyForce(0, -200, guy.x, guy.y)
+			--guy:applyForce(0, -800, guy.x, guy.y)
+		--[[	while (holding) do 
+				linearVelocityX, linearVelocityY = guy:getLinearVelocity()
+				print(linearVelocityY)
+				if (event.phase == "ended") then
+					print("ended")
+					holding = false
+				elseif (linearVelocityY < -400) then
+					guy:applyLinearImpulse(0, jumpSpeed, guy.x, guy.y)
+					jumpSpeed = jumpSpeed - 12
+				else
+					holding = false
+				end
+			end--]]
 			changeColor(event)
-		end
-
-		elseif event.target.isFocus then
+			end		
+		
+	elseif event.target.isFocus then 
 		if event.phase == "moved" then
 		elseif (event.phase == "ended" or event.phase == "cancelled") then
 				holding = false
 				jumpSpeed = -125
-				
 				canJump = true
 				--Runtime:removeEventListener( "enterFrame", playerGo)		
 				display.getCurrentStage():setFocus( nil )
 				event.target.isFocus = false
 			end
-		end
-
+		
+end
 	return true
 	
 end
@@ -393,27 +417,14 @@ local function distance(obj1X, obj1Y, obj2X, obj2Y)
 	return dist
 end
 
-local function handleSwipe (event)
-	print(event.phase)
-	if (event.phase == "moved") then 
-
-		--if dX is greater than 10, then we consider it a swipe
-		print("DXY EQUALS ====== ")
-		print(distance(event.xStart, event.yStart, event.x, event.y))
-		if (distance(event.xStart, event.yStart, event.x, event.y) > 10) then 
-				print("GUY DISTANCE EQUALS ====")
-				print(distance(guy.x, guy.y, event.x, event.y))
-				if (distance(guy.x, guy.y, event.x, event.y) < 15) then 
-
-			--SET COLOR OF BLOCK HERE 
-				guy:setFillColor(255,255,255)
-				isPoweredUp = true
-				wasPoweredUp = true
-				timer.performWithDelay(50, respawnPowerUp, 1)
-				timers[0] = timer.performWithDelay(7000, endPowerUp, 1)
-			end
-		end
-	end
+local function getPowerup (event)
+	rainbow()
+	--SET COLOR OF BLOCK HERE 
+	guy:setFillColor(255,255,255)
+	isPoweredUp = true
+	wasPoweredUp = true
+	timer.performWithDelay(50, respawnPowerUp, 1)
+	timers[0] = timer.performWithDelay(7000, endPowerUp, 1)
 		
 end
 
@@ -423,12 +434,12 @@ local function speedUp()
 		linearVelocityX, linearVelocityY = guy:getLinearVelocity()
 		guy:setLinearVelocity(linearVelocityX + .01, linearVelocityY)
 	end
-	while (guy.x < 100) do 
-		if (guy.y > 50) then
+	--[[while (guy.x < 100) do 
+		if (guy.y  > display.contentHeight*.87) then
 			return
 		end
-		guy.x = guy.x + .1
-	end
+		guy.x = guy.x + .001
+	end--]]
 end
 
 
@@ -453,7 +464,7 @@ local function onCollision( event )
 		hasCollided = true
 		canJump = true
 		--end
-		timer.performWithDelay(600, speedUp, 1)
+		timer.performWithDelay(450, speedUp, 1)
 		if (firsttouch) then
 			ecolor[0] = bcolor[0]
 			ecolor[1] = bcolor[1]
@@ -527,7 +538,7 @@ local function onCollision( event )
 				end
 			end
 		end
-	if (shouldEnd) then
+	if (shouldEnd and (guy.y > display.contentHeight * .87 or guy.x < -25)) then
 		endGame()
 		end
 		elseif ( event.phase == "ended" ) then  
@@ -579,14 +590,21 @@ function scene:create( event )
 	physics.addBody(block4, "static", {density = 1, friction = 0, bounce = 0});
 	block4.myName= "block4"
 	b4c = setBlockColor(block4);
-	red = display.newCircle(display.contentWidth/6, display.contentHeight * .87, 25 )
+	--[[red = display.newCircle(display.contentWidth/6, display.contentHeight * .87, 25 )
 	red:setFillColor(225/255, 105/225, 97/225)
 	blue = display.newCircle(display.contentWidth/ 2, display.contentHeight * .87, 25 )
 	blue:setFillColor(119/255,158/255,203/255)
 	green = display.newCircle((display.contentWidth * 5)/6, display.contentHeight * .87, 25 )
-	green:setFillColor(119/255,190/255,119/255)
+	green:setFillColor(119/255,190/255,119/255)--]]
 	--guy = display.newCircle( 100, 150, 25 )
 	--guy:setFillColor( math.random(0,255)/255,math.random(0,255)/255,math.random(0,255)/255)
+
+	red = display.newRect(display.contentWidth/6, display.contentHeight * .93, display.contentWidth / 3, 65)
+	red:setFillColor(225/255, 105/225, 97/225)
+	blue = display.newRect(3 * display.contentWidth / 6, display.contentHeight * .93, display.contentWidth / 3, 65)
+	blue:setFillColor(119/255,158/255,203/255)
+	green = display.newRect(5 * display.contentWidth / 6,  display.contentHeight * .93, display.contentWidth / 3, 65)
+	green:setFillColor(119/255,190/255,119/255)
 	physics.addBody(guy, {density=1, friction=0, bounce=0 , radius = 25 } );
 	guy.isSleepingAllowed = false
 
@@ -619,11 +637,19 @@ end
 function scene:show( event )
 	local sceneGroup = self.view
 	local phase = event.phase
+	number = number + 1
+
 	if ( phase == "will" ) then
+		if (number >= 3) then 
+			number = 0
+			ads.load("interstitial", {appId=interstitialAppID, testMode = false})
+		end
+		ads.show( "banner", { x=0, y=-10000, appId = bannerAppID } )
+	
 		if (settings.shouldPlayMusic ) then
 			playBackgroundMusic = audio.play(backgroundMusic, {loops = -1, fadein = 500, fadeout = 500, channel = 1})
 		end
-		ads.show( "banner", { x=0, y=-10000, appId = bannerAppID } )
+		
 	guy.x = 100
 	guy.y = 75
 	startingBlock.x = 0
@@ -671,8 +697,9 @@ red:addEventListener( "touch", touchHandler)
 blue:addEventListener( "touch", touchHandler)
 green:addEventListener("touch" , touchHandler) 
 guy:addEventListener( "collision",  onCollision)
-powerUp:addEventListener("touch", handleSwipe)
+powerUp:addEventListener("touch", getPowerup)
 
+	Runtime:addEventListener("enterFrame", playerGo)
 	Runtime:addEventListener("enterFrame", isAlive)
 	Runtime:addEventListener( "enterFrame", pUpGo );
 	Runtime:addEventListener("enterFrame", go)
@@ -680,14 +707,12 @@ powerUp:addEventListener("touch", handleSwipe)
 	Runtime:addEventListener("enterFrame",  go3)
 	Runtime:addEventListener("enterFrame", go4)
 	Runtime:addEventListener("enterFrame", startBlockGo)
-	Runtime:addEventListener("enterFrame", playerGo)
 	Runtime:addEventListener("enterFrame", ballRotate)
 
 	
 	
 	elseif ( phase == "did" ) then
 		composer.removeHidden()
-
 
 
 			
@@ -719,6 +744,9 @@ function scene:hide( event )
 		--sceneGroup:removeSelf()
 --[		local sceneGroup = self.view
 		ads.hide()
+		if (ads.isLoaded("interstitial")) then 
+			ads.show("interstitial", {appId=interstitialAppID, testMode = false})
+		end
 		if (startingBlock ~= nil) then
 			Runtime:removeEventListener("enterFrame", startBlockGo)
 		end
