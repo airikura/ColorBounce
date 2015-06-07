@@ -49,7 +49,7 @@ function scene:create(event)
 
 	backButton = widget.newButton
 	{
-		left = -44,
+		left = -display.contentWidth * .075,
 		top = 0,
 		defaultFile = "back.png",
 
@@ -97,7 +97,7 @@ function scene:show( event )
     		if (settings.shouldPlayMusic) then
 				playBackgroundMusic = audio.play(backgroundMusic, {loops = -1})
 			end
-			ads.show( "banner", { x=display.contentCenterX, y=0, appId = bannerAppID} )
+			ads.show( "banner", { x=0, y=10000, appId = bannerAppID} )
    		elseif ( phase == "did" ) then
    			composer.removeHidden()
    			local function handleCheckboxEvent( event )

@@ -11,23 +11,13 @@
 		local settingsButton
 		settings = {}
 		local ads = require( "ads" )
-		local bannerAppID
-		local publisherID
+local publisherID
+local bannerAppID
+local interstitialAppID
 
 
 	--	ads.init("admob", "pub-8667480018293512", adListener)
-	--	ads.show( "banner", { x=0, y=0 } )
-
-
-		local function adListener( event )
-			print("hello")
-    if ( event.isError ) then
-        --Failed to receive an ad
-    end
-end
-
-
-
+	--	ads.show( "banner", { x=0, y=0 } 
 
 
 
@@ -36,11 +26,15 @@ end
 
 		function scene:create(event)
 			print("create")
-			number = 0
+			if (number == nil) then
+				number = 0
+			end
+
 			local sceneGroup = self.view
-			local publisherID = "pub-8667480018293512"
-			local bannerAppID = "ca-app-pub-8667480018293512/1059290188"
-			ads.init("admob", publisherID, adListener)
+			publisherID = "pub-8667480018293512"
+	bannerAppID = "ca-app-pub-8667480018293512/1059290188"
+	interstitialAppID = "ca-app-pub-8667480018293512/5806900586"
+	ads.init("admob", publisherID, adListener)
 			settings = loadTable("gameSettings.json")
 			if (settings == nil) then 
 				settings = {shouldPlayMusic = false}
@@ -103,11 +97,17 @@ end
 			local sceneGroup = self.view
 			local phase = event.phase
 			number = number + 1
+			if (ads.isLoaded("interstitial")) then
+				ads.show("interstitial", {x = 0, y = 0, appId = interstitialAppID})
+			else
+				ads.show( "banner", { x=0, y=10000, appId = bannerAppID} )
+			end
     	if ( phase == "will" ) then
+
     		if (settings.shouldPlayMusic) then
 				playBackgroundMusic = audio.play(backgroundMusic, {loops = -1})
 			end
-			ads.show( "banner", { x=0, y=10000, appId = bannerAppID } )
+			
    		elseif ( phase == "did" ) then
    			print("entering scene")
    			composer.removeHidden()
