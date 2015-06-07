@@ -3,7 +3,6 @@ local scene = composer.newScene()
 composer.removeOnSceneChange = true
 local physics = require( "physics")
 local ads = require("ads")
-local ads = require("ads")
 local bannerAppID
 local interstitialAppID
 local publisherID
@@ -82,7 +81,7 @@ end
 --	print( memUsage_str, "TEXTURE = "..(system.getInfo("textureMemoryUsed") / (1024 * 1024) ) )
 --end
 
-timer.performWithDelay( 1000, checkMemory, 0 )
+--timer.performWithDelay( 1000, checkMemory, 0 )
 
 
 
@@ -131,7 +130,14 @@ local function onComplete( event )
 		local i = event.index
 		if i == 1 then 
 			--native.cancelAlert(mAlert)
+			if (number == 1) then 
+				composer.gotoScene("scene2", options)
+				print("IS_LOADED")
+				--ads.show("interstitial", {x = 0, y = 0, appId = interstitialAppID})
+			
+			else 
 			composer.gotoScene("scene2", options)
+		end
 		end
 	end
 end
@@ -255,7 +261,7 @@ local function playerGo(event)
 	if holding then
 		linearVelocityX, linearVelocityY = guy:getLinearVelocity()
 		if linearVelocityY > -200 then
-			guy:applyForce(0,jumpSpeed, guy.x, guy.y)
+			guy:setLinearVelocity(linearVelocityX,jumpSpeed)
 			jumpSpeed = jumpSpeed - 12
 		else
 			holding = false
@@ -278,7 +284,7 @@ local function touchHandler( event )
 			firsttouch = true
 			canJump = false
 			hasCollided = false
-			guy:applyForce(0, -200, guy.x, guy.y)
+			guy:setLinearVelocity(0, -235)
 			--guy:applyForce(0, -800, guy.x, guy.y)
 		--[[	while (holding) do 
 				linearVelocityX, linearVelocityY = guy:getLinearVelocity()
@@ -462,7 +468,7 @@ local function onCollision( event )
 		hasCollided = true
 		canJump = true
 		--end
-		timer.performWithDelay(450, speedUp, 1)
+		timer.performWithDelay(350, speedUp, 1)
 		if (firsttouch) then
 			ecolor[0] = bcolor[0]
 			ecolor[1] = bcolor[1]
@@ -568,6 +574,7 @@ function scene:create( event )
 	local sceneGroup = self.view
 	publisherID = "pub-8667480018293512"
 	bannerAppID = "ca-app-pub-8667480018293512/2536023388"
+	interstitialAppID = "ca-app-pub-8667480018293512/5806900586"
 	ads.init("admob", "pub-8667480018293512", adListener)
 	timers = {}
 	physics.setGravity( 0, 17.5)
@@ -639,13 +646,15 @@ function scene:show( event )
 	local sceneGroup = self.view
 	local phase = event.phase
 	number = number + 1
-
+	print("NUMBER === (SCENE 2)")
+	print(number)
 	if ( phase == "will" ) then
-		if (number >= 3) then 
+		if (number >= 4) then 
+			print("Loading up!!!")
 			number = 0
-			ads.load("interstitial", {appId=interstitialAppID, testMode = false})
+			ads.load("interstitial", {appId=interstitialAppID, testMode = true})
 		end
-		ads.show( "banner", { x=0, y=-10000, appId = bannerAppID } )
+		--ads.show( "banner", { x=0, y=-10000, appId = bannerAppID } )
 	
 		if (settings.shouldPlayMusic ) then
 			playBackgroundMusic = audio.play(backgroundMusic, {loops = -1, fadein = 500, fadeout = 500, channel = 1})
@@ -701,7 +710,7 @@ green:addEventListener("touch" , touchHandler)
 guy:addEventListener( "collision",  onCollision)
 powerUp:addEventListener("touch", getPowerup)
 
-	Runtime:addEventListener("enterFrame", playerGo)
+	--Runtime:addEventListener("enterFrame", playerGo)
 	Runtime:addEventListener("enterFrame", isAlive)
 	Runtime:addEventListener( "enterFrame", pUpGo );
 	Runtime:addEventListener("enterFrame", go)
@@ -745,15 +754,12 @@ function scene:hide( event )
 		--local sceneGroup = self.view
 		--sceneGroup:removeSelf()
 --[		local sceneGroup = self.view
-		ads.hide()
-		if (ads.isLoaded("interstitial")) then 
-			ads.show("interstitial", {appId=interstitialAppID, testMode = false})
-		end
+		--ads.hide()
 		if (startingBlock ~= nil) then
 			Runtime:removeEventListener("enterFrame", startBlockGo)
 		end
 		Runtime:removeEventListener("enterFrame", isAlive)
-		Runtime:removeEventListener("enterFrame", playerGo)
+		--Runtime:removeEventListener("enterFrame", playerGo)
 		Runtime:removeEventListener("enterFrame", go)
 		Runtime:removeEventListener("enterFrame", go2)
 		Runtime:removeEventListener("enterFrame", go3)
@@ -762,6 +768,7 @@ function scene:hide( event )
 		Runtime:removeEventListener("enterFrame", ballRotate); 
 
 		if (timers[0] ~= nil) then 
+			print("cancelling")
 			timer.cancel(timers[0])
 		end
 		--composer.removeScene( "scene1" )
