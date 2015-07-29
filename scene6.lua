@@ -12,9 +12,7 @@ function scene:show ( event )
 	local options = {
 	width = 2270,
 	height = 1281,
-	numFrames = 2,
-	sheetContentWidth = 2270,
-	sheetContentHeight = 1281
+	numFrames = 2
 	}
 	local tutorialSheet = graphics.newImageSheet("Tutorial1-doublescrn.jpg", options)
 	local sequences_flashGreen = {
