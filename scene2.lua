@@ -124,7 +124,7 @@ local interstitialAppID
 		 		   }
 				}
 				print("Button Clicked")
-		        composer.gotoScene( "scene1" , options);
+		        composer.gotoScene( "scene6" , options);
 		        return true;
 		  		end
 			end

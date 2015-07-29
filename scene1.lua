@@ -553,6 +553,7 @@ local function onCollision( event )
 		end
 end
 
+
 --local function colorTouch(event)
 --	if (event.phase == "began") then 
 --		if (canJump) then
@@ -648,6 +649,7 @@ function scene:show( event )
 	number = number + 1
 	print("NUMBER === (SCENE 2)")
 	print(number)
+
 	if ( phase == "will" ) then
 		if (number >= 4) then 
 			print("Loading up!!!")
@@ -695,10 +697,14 @@ firsttouch = true
 bcolor = {1,1,1}
 ecolor= {1,1,1}
 
-	powerUp = display.newRect( math.random(1500, 2200), block.y - 125, 50, 50 )
-				physics.addBody( powerUp, "dynamic" , {density=0, friction=0, bounce=0 } )
+	powerUp = display.newImage("powerUpImage.png", math.random(1500, 2200), block.y - 125, true)
+	--display.newRect( math.random(1500, 2200), block.y - 125, 50, 50 )
+	powerUp:scale(.25,.25)
+				physics.addBody( powerUp, "dynamic" , {density=0, friction=0, bounce=0, radius = 25} )
+				
 				powerUp.gravityScale = 0
-				powerUp:setFillColor( gradient )
+				--powerUp:setFillColor( gradient )
+
 				powerUp.myName = "powerUp"
 				powerUp.isSensor = true
 				sceneGroup:insert( powerUp )
