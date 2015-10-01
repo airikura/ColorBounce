@@ -3,44 +3,25 @@ local scene = composer.newScene()
 local widget = require ( "widget" )
 local onTutorialTwo
 local continueButton
+local tutorialScreen
 local blinkText
 
 function scene:create ( event )
 	
 	--continueButton.alpha = 0.01
-	onTutorialTwo = false 
 end
-
-
 
 function scene:show ( event )
 	local sceneGroup = self.view
 	local options = {
 	width = 2270,
 	height = 1281,
-	numFrames = 2
-
+	numFrames = 1
 	}
-	
-	
-	
-	local tutorialSheet = graphics.newImageSheet("Tutorial1-doublescrnTestCopy.jpg", options)
-	local sequences_flashGreen = {
-		{
-		name = "normalFlash",
-		start = 1,
-		count = 2,
-		time = 200,
-		loopCount = 0, 
-		loopDirection = "forward"
-		}
-	}
-	local flashGreen = display.newSprite(tutorialSheet, sequences_flashGreen)
-	
-	flashGreen.x = display.contentCenterX
-	flashGreen.y = display.contentCenterY
-	flashGreen:scale(.25,.25)
-	flashGreen:play() 
+	tutorialScreen = display.newImageRect("colorBounceTutorial2Copy.jpg", display.contentWidth * 1.20, display.contentHeight)
+	tutorialScreen.x = display.contentCenterX
+	tutorialScreen.y = display.contentCenterY 
+	sceneGroup:insert(tutorialScreen)
 
 	local tapToContinue = display.newText("Tap anywhere to continue",display.contentWidth/2, 30, "Arial", 36)
 	tapToContinue:setTextColor(0,0,0)
@@ -70,7 +51,6 @@ function scene:show ( event )
 	}
 	continueButton.isHitTestable = true
 
-	sceneGroup:insert(flashGreen)
 	sceneGroup:insert(tapToContinue)
 	sceneGroup:insert(continueButton)
 
@@ -78,19 +58,22 @@ function scene:show ( event )
 		if ( event.phase == "ended" ) then
 		   		local options =
 				{
-				  	effect = "slideLeft",
-				    time = 300,
+				  	effect = "crossFade",
+				    time = 100,
 				    params =
 		 		   {
 		 		   }
 				}
-		        composer.gotoScene( "scene7" , options);
+		        composer.gotoScene( "scene1" , options);
 		  		return true;
 		end
 	end
 	continueButton:addEventListener("touch", handleContinueButtonEvent)
 	continueButton.alpha = 0
 end
+
+	
+	--composer.gotoScene( "scene2" )
 
 function scene:hide ( event )
 	timer.cancel(blinkText)

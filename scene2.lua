@@ -3,12 +3,13 @@
 		local widget = require( "widget" )
 		local physics = require( "physics" )
 		gameSettings = require("gameSettings")
-		local score1
+		local score1 = require( "score" )
 		local newGame
 		local scoreButton 
 		local backgroundMusic
 		local playBackgroundMusic
 		local settingsButton
+		local tapToContinue
 		settings = {}
 		local ads = require( "ads" )
 local publisherID
@@ -40,6 +41,9 @@ local interstitialAppID
 				settings = {shouldPlayMusic = false}
 				saveTable(settings,"gameSettings.json")
 			end
+			
+
+			
 			newGame = widget.newButton
 			{
 		    	left = 100,
@@ -49,8 +53,11 @@ local interstitialAppID
 		    	onPress = handleButtonEvent,
 		    	fontSize = 20,
 		    	shape = "roundedRect",
-		    	fillColor = { default={ 1, 0.4, 0.5, 0.7 }, over={ 1, 0.4, 0.5, 1 } },
-		    	labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 } }
+		    	--fillColor = { default={ 1, 0.4, 0.5, 0.7 }, over={ 1, 0.4, 0.5, 1 } },
+		    	--labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 } },
+		    	fillColor = {default = {0.33333,0.33333,0.33333}, over = {0.33333,0.333333,0.33333}},
+		    	labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 }},
+		    	fontSize = 20
 			}
 			settingsButton = widget.newButton
 			{
@@ -61,8 +68,11 @@ local interstitialAppID
 				onPress = handleSettingsButtonEvent,
 				fontSize = 20,
 				shape = "roundedRect",
-		    	fillColor = { default={ 1, 0.4, 0.5, 0.7 }, over={ 1, 0.4, 0.5, 1 } },
-		    	labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 } }
+		    	--fillColor = { default={ 1, 0.4, 0.5, 0.7 }, over={ 1, 0.4, 0.5, 1 } },
+		    	--labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 } }
+		    	fillColor = {default = {0.33333,0.33333,0.33333}, over = {0.33333,0.333333,0.33333}},
+		    	labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 }},
+		    	fontSize = 20
 			}
 			scoreButton = widget.newButton
 			{
@@ -72,9 +82,11 @@ local interstitialAppID
 		    	label = "High Score",
 		    	onPress = handleScoreButtonEvent,
 		    	shape = "roundedRect",
-		    	fillColor = { default={ 1, 0.4, 0.5, 0.7 }, over={ 1, 0.4, 0.5, 1 } },
-		    	fontSize = 20,
-		    	labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 }}
+		    	--fillColor = { default={ 1, 0.4, 0.5, 0.7 }, over={ 1, 0.4, 0.5, 1 } },
+		    	fillColor = {default = {0.33333,0.33333,0.33333}, over = {0.33333,0.333333,0.33333}},
+		    	labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 }},
+		    	fontSize = 20
+		    	--labelColor = { default={ 0, 0, 0 }, over={ 0.1, 0.1, 0.1 }}
 			}
 			scoreButton.x = display.contentCenterX 
 			scoreButton.y = display.contentCenterY  
@@ -89,7 +101,7 @@ local interstitialAppID
 			sceneGroup:insert(scoreButton)
 			sceneGroup:insert(settingsButton)
 			if (settings.shouldPlayMusic) then
-				backgroundMusic = audio.loadSound("colorBallMenuMusic.mp3")
+				backgroundMusic = audio.loadSound("ColorBounceMenuMusic3.mp3")
 			end
 		end
 
@@ -117,23 +129,35 @@ local interstitialAppID
 		    	if ( event.phase == "ended" ) then
 		   			 local options =
 				{
-				    effect = "fade",
-				    time = 0,
+				    effect = "fromTop",
+				    time = 300,
 				    params =
 		 		   {
 		 		   }
 				}
 				print("Button Clicked")
-		        composer.gotoScene( "scene6" , options);
-		        return true;
+				if (score1.getScore == nil) then
+		        	composer.gotoScene( "scene6" , options);
+				else 
+					options =
+					{
+				  	  effect = "zoomInOutFade",
+				  	  time = 300,
+				 	   params =
+		 		 	  {
+		 		 	  }
+					}
+					composer.gotoScene( "scene1" , options)
 		  		end
+		  		return true;
 			end
+		end
 		  	local function handleScoreButtonEvent ( event ) 
 		  	 	if ( event.phase == "ended" ) then
 		   			 local options =
 				{
 				    effect = "fade",
-				    time = 50,
+				    time = 100,
 				    params =
 		 		   {
 		 		   }
@@ -148,7 +172,7 @@ local interstitialAppID
 				if (event.phase == "ended" ) then 
 				local options = {
 				effect = "fade",
-				time = 50,
+				time = 100,
 				params = {
 				}
 				}
@@ -157,6 +181,7 @@ local interstitialAppID
 				return true;
 				end
 			end
+
 			settingsButton:addEventListener("touch", handleSettingsButtonEvent)
 			scoreButton:addEventListener("touch", handleScoreButtonEvent)
 			newGame:addEventListener("touch", handleButtonEvent)

@@ -42,16 +42,19 @@ function scene:create(event)
 		top = display.contentCenter,
 		label = "Confirm",
 		shape = "roundedRect",
-		fillColor = { default={ 1, 0.4, 0.5, 0.7 }, over={ 1, 0.4, 0.5, 1 } },
+		--fillColor = { default={ 1, 0.4, 0.5, 0.7 }, over={ 1, 0.4, 0.5, 1 } },
 		fontSize = 20,
+		font = Helvetica,
+		--labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 }}
+		fillColor = {default = {0.33333,0.33333,0.33333}, over = {0.33333,0.333333,0.33333}},
 		labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 }}
 	}
 
 	backButton = widget.newButton
 	{
-		left = -display.contentWidth * .075,
-		top = 0,
-		defaultFile = "back.png",
+		left = -display.contentWidth * .27,
+		top = display.contentHeight * -.27,
+		defaultFile = "back_new.png",
 
 		--label = "back",
 		--shape = "roundedRect",
@@ -59,7 +62,7 @@ function scene:create(event)
 		--fontSize = 20,
 		--labelColor = { default={ 1, 1, 1 }, over={ 0.8, 0.8, 0.8 }}
 	}
-	backButton:scale( .5, .5 )
+	backButton:scale( .16, .16 )
 
 
 
@@ -67,7 +70,7 @@ function scene:create(event)
 	shouldPlayMusicText:setFillColor(.2,.2,.2)
 	shouldPlayMusicText.text = "Play in-game music: "
 	
-	backgroundMusic = audio.loadSound("colorBallMenuMusic.mp3")
+	backgroundMusic = audio.loadSound("ColorBounceMenuMusic3.mp3")
 	if (settings.shouldPlayMusic) then
 		shouldPlayMusicCheckbox:setState{
 		isOn = true
@@ -121,8 +124,8 @@ function scene:show( event )
 		  	 	if ( event.phase == "ended" ) then
 		   			 local options =
 				{
-				    effect = "fade",
-				    time = 50,
+				    effect = "slideRight",
+				    time = 250,
 				    params =
 		 		   {
 		 		   }
@@ -136,8 +139,8 @@ function scene:show( event )
 		  	 	if ( event.phase == "ended" ) then
 		   			 local options =
 				{
-				    effect = "fade",
-				    time = 50,
+				    effect = "slideRight",
+				    time = 250,
 				    params =
 		 		   {
 		 		   }
@@ -145,14 +148,16 @@ function scene:show( event )
 				if (shouldPlayMusicCheckbox.isOn) then
 					settings.shouldPlayMusic = true
 					saveTable(settings, "gameSettings.json")
+					composer.gotoScene( "scene2" , options);
 					if (playBackgroundMusic == nil) then
-						playBackgroundMusic = audio.play(backgroundMusic, {loops = -1})
+						--playBackgroundMusic = audio.play(backgroundMusic, {loops = -1})
 					end
 				else
 					settings.shouldPlayMusic = false
 					saveTable(settings, "gameSettings.json")
 					audio.stop(playBackgroundMusic)
 					playBackgroundMusic = nil
+					composer.gotoScene( "scene2" , options);
 				end
 		        return true;
 				end
