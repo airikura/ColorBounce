@@ -128,6 +128,14 @@ end
 local function onComplete( event )
 	if event.action == "clicked" then
 		local i = event.index
+		local options = 
+					{
+				  	  effect = "fade",
+				  	  time = 400,
+				 	   params =
+		 		 	  {
+		 		 	  }
+					}
 		if i == 1 then 
 			--native.cancelAlert(mAlert)
 			if (number == 1) then 
@@ -192,6 +200,13 @@ local function changeColor(event)
 	local tapSound
 	local playTapSound
 	if (isPoweredUp == true) then 
+		if (event.target == red) then 
+			gc = 1; 
+		elseif (event.target == green) then 
+			gc = 3; 
+		elseif (event.target == blue) then 
+			gc = 2; 
+		end
 		return
 	else if (event.target == red) then
 		gc = 1
@@ -249,7 +264,7 @@ local function go( event )
 	if (block.x < -200) then
 		block.x = block4.x + math.random(115 + 20* speed, 185 + 21* speed)
 		if (score > 20) then
-			block.y = display.contentHeight - 100 - math.random(0, 35 + ((3/2) * speed))
+			block.y = display.contentHeight - 100 - math.random(0, 27 + ((5/4) * speed))
 		end
 		b1c = setBlockColor(block)
 	end
@@ -335,7 +350,7 @@ end
 		if (block2.x < -200) then
 			block2.x = block.x + math.random(120 + 20* speed,185 + 21* speed)
 			if (score > 20) then 
-				block2.y = display.contentHeight - 100 - math.random(0, 35 + ((3/2) *speed))
+				block2.y = display.contentHeight - 100 - math.random(0, 27 + ((5/4) *speed))
 			end
 			b2c = setBlockColor(block2)
 
@@ -347,7 +362,7 @@ local function go3( event )
 	if (block3.x < -200) then
 		block3.x = block2.x + math.random(120 + 20 * speed,185+ 21* speed)
 		if (score > 20) then 
-			block3.y = display.contentHeight - 100 - math.random(0, 35 + ((3/2)*speed))
+			block3.y = display.contentHeight - 100 - math.random(0, 27 + ((5/4)*speed))
 		end
 		b3c = setBlockColor(block3)
 	end
@@ -358,7 +373,7 @@ local function go4( event )
 	if (block4.x < -200) then 
 		block4.x = block3.x + math.random(120 + 20* speed,185 + 21* speed)
 		if (score > 20) then
-			block4.y = display.contentHeight - 100 - math.random(0, 35 + ((3/2) *speed))
+			block4.y = display.contentHeight - 100 - math.random(0, 27 + ((5/4) *speed))
 		end
 		b4c = setBlockColor(block4)
 	end
@@ -618,7 +633,7 @@ function scene:create( event )
 	guy.isSleepingAllowed = false
 
 	if (settings.shouldPlayMusic) then
-		backgroundMusic = audio.loadSound("CoronaMusicNew1.mp3")
+		backgroundMusic = audio.loadSound("ColorBounceSoundtrack2.mp3")
 	end
 
 

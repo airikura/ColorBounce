@@ -28,6 +28,7 @@ end
 function M.getScore()
    return M.score
 end
+
 function M.add( amount )
    M.score = M.score + amount
    M.scoreText.text = string.format( M.format, M.score )
