@@ -1,4 +1,7 @@
 			local composer = require( "composer" )
+			local physics = require( "physics" )
+			physics.start(true)
+			physics.setGravity( 0, 17.5)
 			local options =
 {
     effect = "fade",

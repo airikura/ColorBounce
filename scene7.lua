@@ -1,18 +1,24 @@
 local composer = require("composer")
 local scene = composer.newScene()
+composer.removeOnSceneChange = true
 local widget = require ( "widget" )
-local onTutorialTwo
 local continueButton
 local tutorialScreen
 local blinkText
+local myTransition
+local tapToContinue
+local hasBeenPressed 
 
 function scene:create ( event )
-	
+	hasBeenPressed = false
 	--continueButton.alpha = 0.01
 end
 
 function scene:show ( event )
 	local sceneGroup = self.view
+
+	
+
 	local options = {
 	width = 2270,
 	height = 1281,
@@ -21,19 +27,20 @@ function scene:show ( event )
 	tutorialScreen = display.newImageRect("colorBounceTutorial2Copy.jpg", display.contentWidth * 1.20, display.contentHeight)
 	tutorialScreen.x = display.contentCenterX
 	tutorialScreen.y = display.contentCenterY 
-	sceneGroup:insert(tutorialScreen)
+	
 
 	local tapToContinue = display.newText("Tap anywhere to continue",display.contentWidth/2, 30, "Arial", 36)
 	tapToContinue:setTextColor(0,0,0)
 
 
 	local function flashText() 
-		if (tapToContinue == nil) then
-			return
-		elseif tapToContinue.alpha < 1 then 
-			transition.to(tapToContinue, {time = 490, alpha = 1})
+		if (hasBeenPressed) then
+			return false 
+		end
+		if tapToContinue.alpha < 1 then 
+			myTransition = transition.to(tapToContinue, {time = 490, alpha = 1})
 		else 
-			transition.to(tapToContinue, {time = 490, alpha = 0.1})
+			myTransition = transition.to(tapToContinue, {time = 490, alpha = 0.1})
 		end
 	end
 
@@ -51,11 +58,12 @@ function scene:show ( event )
 	}
 	continueButton.isHitTestable = true
 
-	sceneGroup:insert(tapToContinue)
-	sceneGroup:insert(continueButton)
-
+	
+	local mParams = event.params
 	local function handleContinueButtonEvent( event ) 
 		if ( event.phase == "ended" ) then
+			if (hasBeenPressed ~= true) then 
+				hasBeenPressed = true 
 		   		local options =
 				{
 				  	effect = "crossFade",
@@ -64,22 +72,48 @@ function scene:show ( event )
 		 		   {
 		 		   }
 				}
-		        composer.gotoScene( "scene1" , options);
-		  		return true;
+				if (mParams.fromNewGame == true)  then 
+		        	composer.gotoScene( "scene1" , options);
+		        	return true
+		  		else
+		  			local options =
+					{
+				  		effect = "crossFade",
+				   		time = 300,
+				    	params =
+		 		   		{
+		 		   		}
+					}
+		  			composer.gotoScene( "scene1" , options )
+		  			return true;
+				end
+			end
+			return true
 		end
 	end
-	continueButton:addEventListener("touch", handleContinueButtonEvent)
 	continueButton.alpha = 0
+	continueButton:addEventListener( "touch", handleContinueButtonEvent)
+	sceneGroup:insert(tutorialScreen)
+	sceneGroup:insert(tapToContinue)
+	sceneGroup:insert(continueButton)
+
 end
 
 	
 	--composer.gotoScene( "scene2" )
 
 function scene:hide ( event )
-	timer.cancel(blinkText)
+
 end
 
 function scene:destroy ( event )
+	print("DESTROY*ING BLINKETXT 7")
+	timer.cancel(blinkText)
+	display.remove(tapToContinue)
+	display.remove(tutorialScreen)
+	continueButton:removeEventListener( "touch", handleContinueButtonEvent )
+	blinkText = nil
+	transition.cancel(myTransition)
 end
 
 scene:addEventListener( "create", scene )
