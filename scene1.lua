@@ -808,6 +808,7 @@ function scene:hide( event )
 		if (timers[0] ~= nil) then 
 			print("cancelling")
 			timer.cancel(timers[0])
+			timers[0] = nil
 		end
 		--composer.removeScene( "scene1" )
 		--if (settings.shouldPlayMusic) then 
