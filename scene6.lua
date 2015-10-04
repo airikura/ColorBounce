@@ -1,14 +1,19 @@
 local composer = require("composer")
 local scene = composer.newScene()
 local widget = require ( "widget" )
-local onTutorialTwo
 local continueButton
+local tutorialSheet
 local blinkText
+local sequences_flashGreen
+local flashGreen
+local myTransition
+local tapToContinue
+local hasBeenPressed = false
+composer.removeOnSceneChange = true
 
 function scene:create ( event )
-	
+	print("creating")
 	--continueButton.alpha = 0.01
-	onTutorialTwo = false 
 end
 
 
@@ -16,16 +21,15 @@ end
 function scene:show ( event )
 	local sceneGroup = self.view
 	local options = {
-	width = 2270,
-	height = 1281,
-	numFrames = 2
-
+		width = 2270,
+		height = 1281,
+		numFrames = 2
 	}
 	
 	
 	
-	local tutorialSheet = graphics.newImageSheet("Tutorial1-doublescrnTestCopy.jpg", options)
-	local sequences_flashGreen = {
+	tutorialSheet = graphics.newImageSheet("Tutorial1-doublescrnTestCopy.jpg", options)
+	sequences_flashGreen = {
 		{
 		name = "normalFlash",
 		start = 1,
@@ -35,7 +39,7 @@ function scene:show ( event )
 		loopDirection = "forward"
 		}
 	}
-	local flashGreen = display.newSprite(tutorialSheet, sequences_flashGreen)
+	flashGreen = display.newSprite(tutorialSheet, sequences_flashGreen)
 	
 	flashGreen.x = display.contentCenterX
 	flashGreen.y = display.contentCenterY
@@ -47,12 +51,13 @@ function scene:show ( event )
 
 
 	local function flashText() 
-		if (tapToContinue == nil) then
-			return
-		elseif tapToContinue.alpha < 1 then 
-			transition.to(tapToContinue, {time = 490, alpha = 1})
+		if (hasBeenPressed) then
+			return false
+		end
+		if tapToContinue.alpha < 1 then 
+			myTransition = transition.to(tapToContinue, {time = 490, alpha = 1})
 		else 
-			transition.to(tapToContinue, {time = 490, alpha = 0.1})
+			myTransition = transition.to(tapToContinue, {time = 490, alpha = 0.1})
 		end
 	end
 
@@ -74,29 +79,46 @@ function scene:show ( event )
 	sceneGroup:insert(tapToContinue)
 	sceneGroup:insert(continueButton)
 
+	local mParams = event.params
 	local function handleContinueButtonEvent( event ) 
-		if ( event.phase == "ended" ) then
-		   		local options =
-				{
-				  	effect = "slideLeft",
-				    time = 300,
-				    params =
-		 		   {
-		 		   }
-				}
-		        composer.gotoScene( "scene7" , options);
-		  		return true;
+	
+			if ( event.phase == "ended" ) then
+			if (hasBeenPressed ~= true) then 
+				hasBeenPressed = true
+			   		local options =
+					{
+					  	effect = "slideLeft",
+					    time = 300,
+					    params =
+			 		   {
+			 		   		fromNewGame = mParams.fromNewGame
+			 		   }
+					}
+
+			        composer.gotoScene( "scene7" , options);
+			  		return true;
+		  		end
+			end
+			return true
 		end
-	end
 	continueButton:addEventListener("touch", handleContinueButtonEvent)
 	continueButton.alpha = 0
 end
 
 function scene:hide ( event )
-	timer.cancel(blinkText)
+	
 end
 
 function scene:destroy ( event )
+	print("DESTRYONG BLINKTEXT")
+	timer.cancel(blinkText)
+	blinkText = nil
+	continueButton:removeEventListener( "touch", handleContinueButtonEvent )
+	tutorialSheet = nil
+	display.remove(sequences_flashGreen)
+	display.remove(tapToContinue)
+	sequences_flashGreen = nil
+	transition.cancel(myTransition)
 end
 
 scene:addEventListener( "create", scene )

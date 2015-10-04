@@ -1,14 +1,17 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
 composer.removeOnSceneChange = true
-local physics = require( "physics")
+physics.start(true);
+print("***JUST STARTED PHYSICS!***")
 local ads = require("ads")
+local sfx = require("sfx")
+local physics = require("physics")
 local bannerAppID
 local interstitialAppID
 local publisherID
-physics.start(nosleep);
 local score1 = require( "score" )
 local scoreBox
+local startingBlock
 local block
 local block2
 local block3
@@ -37,10 +40,10 @@ local jumpSpeed
 local rLength
 local hasCollided 
 
-				local gradient = graphics.newGradient(
-					{ 1, 0, 0 },
-					{ 0, 0, 1 },
-					"down" ) 
+local gradient = graphics.newGradient(
+	{ 1, 0, 0 },
+	{ 0, 0, 1 },
+	"down" ) 
 local pUpRandom 
 local rainbowHappening 
 local canSpawn 
@@ -68,8 +71,8 @@ local options =
 }
 
 local function adListener( event )
-			print("hello")
-    if ( event.isError ) then
+	print("hello")
+	if ( event.isError ) then
         --Failed to receive an ad
 
     end
@@ -97,67 +100,69 @@ local function after(event)
 
 			elseif (rLength == 2) then
 				r[rLength]:setFillColor( 1, .5,0 )
-			elseif (rLength == 3) then
-				r[rLength]:setFillColor( 1, 1,0 )
-			elseif (rLength == 4) then
-				r[rLength]:setFillColor( 0, 1,0 )
-			elseif (rLength == 5) then
-				r[rLength]:setFillColor( 0, 0, 1 )
-			elseif (rLength == 6) then
-				r[rLength]:setFillColor( .5, 0,1 )
-			elseif (rLength == 7) then
-				r[rLength]:setFillColor( 1, 0,.5 )
-		end
-	end
-		if (rLength>10) then
-			r[rLength - 10]:removeSelf( )
-		end
+				elseif (rLength == 3) then
+					r[rLength]:setFillColor( 1, 1,0 )
+					elseif (rLength == 4) then
+						r[rLength]:setFillColor( 0, 1,0 )
+						elseif (rLength == 5) then
+							r[rLength]:setFillColor( 0, 0, 1 )
+							elseif (rLength == 6) then
+								r[rLength]:setFillColor( .5, 0,1 )
+								elseif (rLength == 7) then
+									r[rLength]:setFillColor( 1, 0,.5 )
+								end
+							end
+							if (rLength>10) then
+								r[rLength - 10]:removeSelf( )
+							end
 							
-	rLength = rLength + 1
-end
+							rLength = rLength + 1
+						end
 
 
-local function rainbow(event)
-	if rainbowHappening == false then
-		rainbowHappening = true
-		rLength = 1
-		timer.performWithDelay(100, after, 17)
-	end
-end
+						local function rainbow(event)
+							if rainbowHappening == false then
+								rainbowHappening = true
+								rLength = 1
+								timer.performWithDelay(100, after, 17)
+							end
+						end
 
-local function onComplete( event )
-	if event.action == "clicked" then
-		local i = event.index
-		local options = 
-					{
-				  	  effect = "fade",
-				  	  time = 400,
-				 	   params =
-		 		 	  {
-		 		 	  }
-					}
-		if i == 1 then 
+						local function onComplete( event )
+							if event.action == "clicked" then
+								local i = event.index
+								local options = 
+								{
+								effect = "fade",
+								time = 400,
+								params =
+								{
+							}
+						}
+						if i == 1 then 
 			--native.cancelAlert(mAlert)
 			if (number == 1) then 
 				composer.gotoScene("scene2", options)
 				print("IS_LOADED")
+				return true
 				--ads.show("interstitial", {x = 0, y = 0, appId = interstitialAppID})
-			
+
 			else 
-			composer.gotoScene("scene2", options)
-		end
+				composer.gotoScene("scene2", options)
+				return true
+			end
 		end
 	end
 end
 
 local function endGame() 
-	if ((score1.load() == nil ) or (score > score1.load()))then
-		score1.set(score)
-		score1.save()
-		native.showAlert("High Score!", "Congratulations, you scored " .. tostring(score1.load()), {"Continue"}, onComplete)
-		
-	else
-		native.showAlert("Score", "You scored " .. score .. "... Better luck next time!", {"Continue"}, onComplete)
+if ((score1.load() == nil ) or (score > score1.load()))then
+	score1.set(score)
+	score1.save()
+	native.showAlert("High Score!", "Congratulations, you scored " .. tostring(score1.load()), {"Continue"}, onComplete)
+
+else
+	native.showAlert("Score", "You scored " .. score .. "... Better luck next time!", {"Continue"}, onComplete)
 		--composer.gotoScene("scene2", options)
 	end
 end
@@ -170,28 +175,28 @@ local function isAlive( event )
 end
 
 local function movepup (event)
-		powerUp.y =  block.y - 300
-		guy:setLinearVelocity( 0  , guy.y < Velocity )
-	end
+	powerUp.y =  block.y - 300
+	guy:setLinearVelocity( 0  , guy.y < Velocity )
+end
 
 
-	local function spawnPowerUp (event)
-		pUpRandom = math.random(1,5)
-		if (pUpRandom  == 1 ) then
-			if (canSpawn == 1) then
-				canSpawn = 0
-				powerUp.x = 700
-				powerUp.y =  block.y - 125; 
-			end
+local function spawnPowerUp (event)
+	pUpRandom = math.random(1,5)
+	if (pUpRandom  == 1 ) then
+		if (canSpawn == 1) then
+			canSpawn = 0
+			powerUp.x = 700
+			powerUp.y =  block.y - 125; 
 		end
 	end
+end
 
-	local function pUpGo (event)
-		powerUp.x = powerUp.x - (speed/2)
-		if (powerUp.x < -500) then
-			canSpawn = 1
-		end
+local function pUpGo (event)
+	powerUp.x = powerUp.x - (speed/2)
+	if (powerUp.x < -500) then
+		canSpawn = 1
 	end
+end
 
 
 
@@ -202,75 +207,84 @@ local function changeColor(event)
 	if (isPoweredUp == true) then 
 		if (event.target == red) then 
 			gc = 1; 
+			bcolor[0] = 255/255
+			bcolor[1] = 204/255
+			bcolor[2] = 0/255
 		elseif (event.target == green) then 
 			gc = 3; 
+			bcolor[0] = 255/255
+			bcolor[1] = 204/255
+			bcolor[2] = 0/255
 		elseif (event.target == blue) then 
 			gc = 2; 
+			bcolor[0] = 255/255
+			bcolor[1] = 204/255
+			bcolor[2] = 0/255
 		end
-		return
+	return
 	else if (event.target == red) then
 		gc = 1
 		guy:setFillColor(225/255,105/225,97/225)
 		bcolor[0] = 225/255
 		bcolor[1] = 105/225
 		bcolor[2] = 97/225
-		tapSound = audio.loadSound("tapRed.mp3" )
+	--	tapSound = audio.loadSound("tapRed.mp3" )
 
-		elseif (event.target == green) then
-			gc = 3
-			guy:setFillColor(119/255,190/255,119/255)
-			bcolor[0] = 119/255
-			bcolor[1] = 190/255
-			bcolor[2] = 119/255
-			tapSound = audio.loadSound("tapGreen.mp3" )
-		
+	elseif (event.target == green) then
+		gc = 3
+		guy:setFillColor(119/255,190/255,119/255)
+		bcolor[0] = 119/255
+		bcolor[1] = 190/255
+		bcolor[2] = 119/255
+		--	tapSound = audio.loadSound("tapGreen.mp3" )
+
 		elseif (event.target == blue) then
-				gc = 2
-				guy:setFillColor(119/255,158/255,203/255)
-				bcolor[0] = 119/255
-				bcolor[1] = 158/255
-				bcolor[2] = 203/255
-				tapSound = audio.loadSound("tapBlue.mp3")
-		end
+			gc = 2
+			guy:setFillColor(119/255,158/255,203/255)
+			bcolor[0] = 119/255
+			bcolor[1] = 158/255
+			bcolor[2] = 203/255
+		--		tapSound = audio.loadSound("tapBlue.mp3")
+	end
 
 			--playTapSound = audio.play(tapSound)
 			audio.dispose(tapSound)
 			playtapSound = nil
 			tapSound = nil
+		end
 	end
-end
 
-local function setBlockColor(block)
+	local function setBlockColor(block)
 		randomNumber = math.random(1,3)
 
 		if (randomNumber == 1) then
 			block:setFillColor(225/255,105/255,97/255 )
 
-		elseif (randomNumber == 2) then
-			block:setFillColor( 119/255,158/255,203/255)
+			elseif (randomNumber == 2) then
+				block:setFillColor( 119/255,158/255,203/255)
 
-		elseif (randomNumber == 3) then
-			block:setFillColor( 119/255,190/255,119/255)
-		end
-	return randomNumber;
+				elseif (randomNumber == 3) then
+					block:setFillColor( 119/255,190/255,119/255)
+				end
+				return randomNumber;
 
-end
-local function ballRotate(  )
-	guy:rotate(speed/2)
-end
-local function go( event )
-	
-	block.x = block.x - (speed/2)
-	if (block.x < -200) then
-		block.x = block4.x + math.random(115 + 20* speed, 185 + 21* speed)
-		if (score > 20) then
-			block.y = display.contentHeight - 100 - math.random(0, 27 + ((5/4) * speed))
-		end
-		b1c = setBlockColor(block)
-	end
-end
+			end
+			local function ballRotate(  )
+				guy:rotate(speed/2)
+			end
+			local function go( event )
 
-local function playerGo(event)
+				block.x = block.x - (speed/2)
+				if (block.x < -200) then
+					block.x = block4.x + math.random(115 + 20* speed, 185 + 21* speed)
+					if (score > 20) then
+						block.y = display.contentHeight - 100 - math.random(0, 27 + ((5/4) * speed))
+					end
+					b1c = setBlockColor(block)
+				end
+			end
+
+			local function playerGo(event)
 	--linearVelocityX, linearVelocityY = guy:getLinearVelocity()
 	--guy:setLinearVelocity(0, linearVelocityY)
 	if holding then
@@ -313,25 +327,25 @@ local function touchHandler( event )
 				else
 					holding = false
 				end
-			end--]]
-			changeColor(event)
+				end--]]
+				changeColor(event)
 			end		
-		
-	elseif event.target.isFocus then 
-		if event.phase == "moved" then
-		elseif (event.phase == "ended" or event.phase == "cancelled") then
-				holding = false
-				jumpSpeed = -125
-				canJump = true
+
+			elseif event.target.isFocus then 
+				if event.phase == "moved" then
+					elseif (event.phase == "ended" or event.phase == "cancelled") then
+					holding = false
+					jumpSpeed = -125
+					canJump = true
 				--Runtime:removeEventListener( "enterFrame", playerGo)		
 				display.getCurrentStage():setFocus( nil )
 				event.target.isFocus = false
 			end
-		
-end
-	return true
-	
-end
+
+		end
+		return true
+
+	end
 
 	local function raiseSpeed(newScore)
 		if (newScore > 5) then
@@ -357,42 +371,47 @@ end
 		end
 	end
 
-local function go3( event )
-	block3.x = block3.x - (speed/2)  
-	if (block3.x < -200) then
-		block3.x = block2.x + math.random(120 + 20 * speed,185+ 21* speed)
-		if (score > 20) then 
-			block3.y = display.contentHeight - 100 - math.random(0, 27 + ((5/4)*speed))
+	local function go3( event )
+		block3.x = block3.x - (speed/2)  
+		if (block3.x < -200) then
+			block3.x = block2.x + math.random(120 + 20 * speed,185+ 21* speed)
+			if (score > 20) then 
+				block3.y = display.contentHeight - 100 - math.random(0, 27 + ((5/4)*speed))
+			end
+			b3c = setBlockColor(block3)
 		end
-		b3c = setBlockColor(block3)
 	end
-end
 
-local function go4( event )
-	block4.x = block4.x - (speed/2)
-	if (block4.x < -200) then 
-		block4.x = block3.x + math.random(120 + 20* speed,185 + 21* speed)
-		if (score > 20) then
-			block4.y = display.contentHeight - 100 - math.random(0, 27 + ((5/4) *speed))
+	local function go4( event )
+		block4.x = block4.x - (speed/2)
+		if (block4.x < -200) then 
+			block4.x = block3.x + math.random(120 + 20* speed,185 + 21* speed)
+			if (score > 20) then
+				block4.y = display.contentHeight - 100 - math.random(0, 27 + ((5/4) *speed))
+			end
+			b4c = setBlockColor(block4)
 		end
-		b4c = setBlockColor(block4)
 	end
-end
 
-local function startBlockGo( event )
+	local function startBlockGo( event )
+		if (startingBlock == nil) then 
+			Runtime:removeEventListener( "enterFrame", startBlockGo)
+			return false
+		end
+
 		startingBlock.x = startingBlock.x - (speed/2)
 		if (startingBlock.x < -1000) then
 			Runtime:removeEventListener( "enterFrame", startBlockGo)
 			startingBlock:removeSelf()
 			startingBlock = nil
 		end
-end
+	end
 
-function afterTimer()
-	t[i]:removeSelf()
-end
+	function afterTimer()
+		t[i]:removeSelf()
+	end
 
-local function explode (event)
+	local function explode (event)
 	--if (i == 16) then
 	--afterTimer()
 	--end
@@ -401,7 +420,7 @@ local function explode (event)
 	t[i] = display.newCircle( guy.x, guy.y, 25 + i *50 )
 	t[i]:setFillColor( ecolor[0],ecolor[1],ecolor[2],.5  )
 	t[i]:toBack()
-		if (i>2) then
+	if (i>2) then
 		t[i-1]:removeSelf( )
 	end
 	if (i == 16) then
@@ -411,16 +430,16 @@ local function explode (event)
 end
 
 local function endPowerUp( event )
-	isPoweredUp = false
-	wasPoweredUp = true
+isPoweredUp = false
+wasPoweredUp = true
 	--SET COLOR BACK
 	if (gc == 1) then 
 		--set red
 		guy:setFillColor(225/255,105/225,97/225)
-	elseif (gc == 2) then 
+		elseif (gc == 2) then 
 		--set blue
 		guy:setFillColor(119/255,158/255,203/255)
-	else if (gc == 3) then
+		else if (gc == 3) then
 		--set green
 		guy:setFillColor(119/255,190/255,119/255)
 	end
@@ -444,7 +463,7 @@ local function getPowerup (event)
 	wasPoweredUp = true
 	timer.performWithDelay(50, respawnPowerUp, 1)
 	timers[0] = timer.performWithDelay(7000, endPowerUp, 1)
-		
+
 end
 
 local function speedUp() 
@@ -458,17 +477,17 @@ local function speedUp()
 			return
 		end
 		guy.x = guy.x + .001
-	end--]]
-end
+		end--]]
+	end
 
 
-local function onCollision( event )
-	print("Colliding")
-	local shouldEnd = false
-	blockGuyY = guy.y
-	if ( event.phase == "began" ) then
-		if (event.other.myName == "powerUp") then
-			rainbow()
+	local function onCollision( event )
+		print("Colliding")
+		local shouldEnd = false
+		blockGuyY = guy.y
+		if ( event.phase == "began" ) then
+			if (event.other.myName == "powerUp") then
+				rainbow()
 			--SET COLOR OF BLOCK HERE 
 			guy:setFillColor(255,255,255)
 			isPoweredUp = true
@@ -497,14 +516,14 @@ local function onCollision( event )
 					firsttouch = false
 					if (isPoweredUp == false) then
 						wasPoweredUp = false
-					
+
 					--If isPoweredUp, updateScore twice
-					else
-						updateScore()
-					end
-				else 
-					shouldEnd = true
+				else
+					updateScore()
 				end
+			else 
+				shouldEnd = true
+			end
 
 			elseif (event.other.myName == "block2") then
 				if (b2c == gc or wasPoweredUp) then
@@ -514,15 +533,15 @@ local function onCollision( event )
 					firsttouch = false
 					if (isPoweredUp == false) then
 						wasPoweredUp = false
-					
+
 					--If isPoweredUp, updateScore twice
-					else 
-						updateScore()
-					end
 				else 
-					shouldEnd = true
+					updateScore()
 				end
-					
+			else 
+				shouldEnd = true
+			end
+
 			elseif (event.other.myName == "block3") then
 				if (b3c == gc or wasPoweredUp) then
 					timer.performWithDelay(10, explode, 15)
@@ -531,14 +550,14 @@ local function onCollision( event )
 					firsttouch = false	
 					if (isPoweredUp == false) then
 						wasPoweredUp = false
-					
+
 					--If isPoweredUp, updateScore twice
-					else 
-						updateScore()
-					end
 				else 
-					shouldEnd = true
+					updateScore()
 				end
+			else 
+				shouldEnd = true
+			end
 			elseif (event.other.myName == "block4") then 
 				if (b4c == gc or wasPoweredUp) then 
 					timer.performWithDelay(10, explode, 15)
@@ -547,25 +566,25 @@ local function onCollision( event )
 					firsttouch = false
 					if (isPoweredUp == false) then
 						wasPoweredUp = false
-					
+
 					--If isPoweredUp, updateScore twice
-					else 
-						updateScore()
-					end
 				else 
-					shouldEnd = true
+					updateScore()
 				end
+			else 
+				shouldEnd = true
 			end
 		end
+	end
 	if (shouldEnd and (guy.y <= display.contentHeight - 95 or guy.x < -25)) then
 		print(guy.y)
 		print(display.contentHeight * .88)
 		Runtime:removeEventListener("enterFrame", isAlive)
 		endGame()
-		end
-		elseif ( event.phase == "ended" ) then  
+	end
+	elseif ( event.phase == "ended" ) then  
 
-		end
+end
 end
 
 
@@ -593,7 +612,7 @@ function scene:create( event )
 	interstitialAppID = "ca-app-pub-8667480018293512/5806900586"
 	ads.init("admob", "pub-8667480018293512", adListener)
 	timers = {}
-	physics.setGravity( 0, 17.5)
+	
 	score1.init()
 	scoreBox = display.newText(0, 450,50, "Helvetica", 36)
 	guy = display.newImage("ball.png", 100, 150, true)
@@ -601,6 +620,8 @@ function scene:create( event )
 	block = display.newRoundedRect(700 , display.contentHeight - 100, 150, 50,4)
 	block.myName ="block"
 	b1c = setBlockColor(block)
+	print("***physics.addBody()***")
+
 	physics.addBody(block, "static", {density = 1, friction = 0, bounce = 0});
 	block2 = display.newRoundedRect(1000 , display.contentHeight - 100, 150, 50,4)
 	physics.addBody(block2, "static", {density = 1, friction = 0, bounce = 0});
@@ -629,8 +650,9 @@ function scene:create( event )
 	blue:setFillColor(119/255,158/255,203/255)
 	green = display.newRect(5 * display.contentWidth / 6,  display.contentHeight * .93, display.contentWidth / 3, 65)
 	green:setFillColor(119/255,190/255,119/255)
-	physics.addBody(guy, {density=1, friction=0, bounce=0 , radius = 25 } );
 	guy.isSleepingAllowed = false
+	physics.addBody(guy, {density=1, friction=0, bounce=0 , radius = 25 } );
+	
 
 	if (settings.shouldPlayMusic) then
 		backgroundMusic = audio.loadSound("ColorBounceSoundtrack2.mp3")
@@ -652,8 +674,6 @@ function scene:create( event )
 	sceneGroup:insert( guy )
 	sceneGroup:insert( startingBlock )
 
-
-
 end
 
 
@@ -672,28 +692,28 @@ function scene:show( event )
 			ads.load("interstitial", {appId=interstitialAppID, testMode = true})
 		end
 		--ads.show( "banner", { x=0, y=-10000, appId = bannerAppID } )
-	
+
 		if (settings.shouldPlayMusic ) then
 			playBackgroundMusic = audio.play(backgroundMusic, {loops = -1, fadein = 500, fadeout = 500, channel = 1})
 		end
 		
-	guy.x = 100
-	guy.y = 75
-	startingBlock.x = 0
-	block.x = 700
-	block2.x = 950
-	block3.x = 1200
-	block4.x = 1450
+		guy.x = 100
+		guy.y = 75
+		startingBlock.x = 0
+		block.x = 700
+		block2.x = 950
+		block3.x = 1200
+		block4.x = 1450
 
-	isPoweredUp = false 
-	wasPoweredUp = false
-	hasCollided = false
-	canJump = false
-	gc = -1
-	score = 0
-	scoreBox.text = 0
-	scoreBox:setTextColor(0.2,0.2,0.2)
-			speed = 5
+		isPoweredUp = false 
+		wasPoweredUp = false
+		hasCollided = false
+		canJump = false
+		gc = -1
+		score = 0
+		scoreBox.text = 0
+		scoreBox:setTextColor(0.2,0.2,0.2)
+		speed = 5
 		holding = false
 		jumpSpeed = -125
 		rLength = 1
@@ -712,24 +732,24 @@ firsttouch = true
 bcolor = {1,1,1}
 ecolor= {1,1,1}
 
-	powerUp = display.newImage("powerUpImage.png", math.random(1500, 2200), block.y - 125, true)
+powerUp = display.newImage("powerUpImage.png", math.random(1500, 2200), block.y - 125, true)
 	--display.newRect( math.random(1500, 2200), block.y - 125, 50, 50 )
 	powerUp:scale(.25,.25)
-				physics.addBody( powerUp, "dynamic" , {density=0, friction=0, bounce=0, radius = 25} )
-				
-				powerUp.gravityScale = 0
+	physics.addBody( powerUp, "dynamic" , {density=0, friction=0, bounce=0, radius = 25} )
+
+	powerUp.gravityScale = 0
 				--powerUp:setFillColor( gradient )
 
 				powerUp.myName = "powerUp"
 				powerUp.isSensor = true
 				sceneGroup:insert( powerUp )
 
-spawnPowerUp(); 
-red:addEventListener( "touch", touchHandler)
-blue:addEventListener( "touch", touchHandler)
-green:addEventListener("touch" , touchHandler) 
-guy:addEventListener( "collision",  onCollision)
-powerUp:addEventListener("touch", getPowerup)
+				spawnPowerUp(); 
+				red:addEventListener( "touch", touchHandler)
+				blue:addEventListener( "touch", touchHandler)
+				green:addEventListener("touch" , touchHandler) 
+				guy:addEventListener( "collision",  onCollision)
+				powerUp:addEventListener("touch", getPowerup)
 
 	--Runtime:addEventListener("enterFrame", playerGo)
 	Runtime:addEventListener("enterFrame", isAlive)
@@ -745,10 +765,6 @@ powerUp:addEventListener("touch", getPowerup)
 	
 	elseif ( phase == "did" ) then
 		composer.removeHidden()
-
-
-			
-		
 	end
 end
 
@@ -756,14 +772,14 @@ function scene:destroy( event )
 	local sceneGroup = self.view
 	local phase = event.phase
 
-   	if ( phase == "will" ) then
+	if ( phase == "will" ) then
 		
-	elseif ( phase == "did" ) then
+		elseif ( phase == "did" ) then
 		--sceneGroup:removeSelf()
 		--sceneGroup = nil
 		--if (settings.shouldPlayMusic) then
-			audio.dispose(backgroundMusic)
-			backgroundMusic = nil;
+		audio.dispose(backgroundMusic)
+		backgroundMusic = nil;
 		--end
 	end
 end
@@ -776,6 +792,7 @@ function scene:hide( event )
 		--sceneGroup:removeSelf()
 --[		local sceneGroup = self.view
 		--ads.hide()
+		physics.pause()
 		if (startingBlock ~= nil) then
 			Runtime:removeEventListener("enterFrame", startBlockGo)
 		end
@@ -794,25 +811,26 @@ function scene:hide( event )
 		end
 		--composer.removeScene( "scene1" )
 		--if (settings.shouldPlayMusic) then 
-			audio.stop(playBackgroundMusic)
-			playBackgroundMusic = nil 
+		--audio.stop()
+		sfx.stop(sfx.longsound)
+		--playBackgroundMusic = nil 
 		--end
 		
 		--audio.dispose(backgroundMusic)
 		--backgroundMusic = nil
 		--sceneGroup:removeSelf()
 		--sceneGroup = nil
-	elseif ( phase == "did" ) then
+		elseif ( phase == "did" ) then
    	     -- Called immediately after scene goes off screen.
-   	     physics.stop()
+   	    
+   	 end
    	end
-end
 	--composer.removeScene("scene1")
 
-scene:addEventListener( "create", scene)
-scene:addEventListener( "hide", scene )	
-scene:addEventListener( "show", scene)
-scene:addEventListener("destroy", scene)
+	scene:addEventListener( "create", scene)
+	scene:addEventListener( "hide", scene )	
+	scene:addEventListener( "show", scene)
+	scene:addEventListener("destroy", scene)
 
 
-return scene
+	return scene
