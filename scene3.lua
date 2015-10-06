@@ -23,6 +23,10 @@ function scene:create(event)
 	scoreText.x = display.contentCenterX
 	scoreText.y = display.contentCenterY
 	score1.init()
+	if (score1.load() == nil) then 
+		score1.set(0)
+		score1.save()
+	end
 	--[[if (settings.shouldPlayMusic) then
 		backgroundMusic = audio.loadSound("ColorBounceMenuMusic3.mp3")
 	end--]]

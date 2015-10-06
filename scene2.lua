@@ -22,10 +22,12 @@ composer.removeOnSceneChange = true
 
 function scene:create(event)
 	print("create")
+	score1.init()
 	if (number == nil) then
-		number = 0
+		number = 1
 	end
-
+	print("NUMBER = ")
+	print (number)
 	local sceneGroup = self.view
 	--[[Setting up our ad id values
 	*************************************]]
@@ -38,7 +40,7 @@ function scene:create(event)
 	--Loading game settings
 	settings = loadTable("gameSettings.json")
 	if (settings == nil) then 
-		settings = {shouldPlayMusic = false}
+		settings = {shouldPlayMusic = true}
 		saveTable(settings,"gameSettings.json")
 	end
 
@@ -127,8 +129,9 @@ function scene:show( event )
 		--Loading ads logic
 		--****************************
 		number = number + 1
-		if (ads.isLoaded("interstitial")) then
+		if (ads.isLoaded("interstitial") and (number >= 5)) then
 			ads.show("interstitial", {x = 0, y = 0, appId = interstitialAppID})
+			number = 0
 		else
 			ads.show( "banner", { x=0, y=10000, appId = bannerAppID} )
 		end
@@ -163,8 +166,11 @@ function scene:show( event )
 					}
 				}
 				--If never played before (no high score), go to tutorial scene
-				if (score1.getScore == nil) then
+				if (score1.load() == nil or score1.load() == 0) then
 					print("going to scene 6")
+					print(score1.load())
+					score1.set(0)
+					score1.save()
 					composer.gotoScene( "scene6" , options);
 					return true
 				else 

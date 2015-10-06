@@ -117,6 +117,7 @@ local function after(event)
 							end
 							
 							rLength = rLength + 1
+							rainbowHappening = false
 						end
 
 
@@ -156,6 +157,7 @@ local function after(event)
 end
 
 local function endGame() 
+	print(score1.load())
 if ((score1.load() == nil ) or (score > score1.load()))then
 	score1.set(score)
 	score1.save()
@@ -175,7 +177,7 @@ local function isAlive( event )
 end
 
 local function movepup (event)
-	powerUp.y =  block.y - 300
+	powerUp.y =  block.y - math.random(125,250)
 	guy:setLinearVelocity( 0  , guy.y < Velocity )
 end
 
@@ -186,7 +188,7 @@ local function spawnPowerUp (event)
 		if (canSpawn == 1) then
 			canSpawn = 0
 			powerUp.x = 700
-			powerUp.y =  block.y - 125; 
+			powerUp.y =  block.y - math.random(125, 215); 
 		end
 	end
 end
@@ -448,6 +450,7 @@ end
 
 local function respawnPowerUp( event ) 
 	powerUp.x = 5000 + math.random(speed,  10 * speed); 
+	powerUp.y = block.y - math.random(125,215)
 end
 
 local function distance(obj1X, obj1Y, obj2X, obj2Y) 
@@ -613,7 +616,7 @@ function scene:create( event )
 	ads.init("admob", "pub-8667480018293512", adListener)
 	timers = {}
 	
-	score1.init()
+	--score1.init()
 	scoreBox = display.newText(0, 450,50, "Helvetica", 36)
 	guy = display.newImage("ball.png", 100, 150, true)
 	guy:scale(.25,.25)
@@ -681,15 +684,11 @@ end
 function scene:show( event )
 	local sceneGroup = self.view
 	local phase = event.phase
-	number = number + 1
-	print("NUMBER === (SCENE 2)")
-	print(number)
 
 	if ( phase == "will" ) then
 		if (number >= 4) then 
 			print("Loading up!!!")
-			number = 0
-			ads.load("interstitial", {appId=interstitialAppID, testMode = true})
+			ads.load("interstitial", {appId=interstitialAppID, testMode = false})
 		end
 		--ads.show( "banner", { x=0, y=-10000, appId = bannerAppID } )
 
