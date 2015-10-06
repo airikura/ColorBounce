@@ -7,12 +7,14 @@ local blinkText
 local sequences_flashGreen
 local flashGreen
 local myTransition
+local tutorialScreen
 local tapToContinue
-local hasBeenPressed = false
+local hasBeenPressed
 composer.removeOnSceneChange = true
 
 function scene:create ( event )
 	print("creating")
+	hasBeenPressed = false
 	--continueButton.alpha = 0.01
 end
 
@@ -20,15 +22,14 @@ end
 
 function scene:show ( event )
 	local sceneGroup = self.view
-	local options = {
+	--[[local options = {
 		width = 2270,
 		height = 1281,
 		numFrames = 2
-	}
+	}]]
 	
 	
-	
-	tutorialSheet = graphics.newImageSheet("Tutorial1-doublescrnTestCopy.jpg", options)
+--[[tutorialSheet = graphics.newImageSheet("Tutorial1-doublescrnTestCopy.jpg", options)
 	sequences_flashGreen = {
 		{
 		name = "normalFlash",
@@ -44,7 +45,11 @@ function scene:show ( event )
 	flashGreen.x = display.contentCenterX
 	flashGreen.y = display.contentCenterY
 	flashGreen:scale(.25,.25)
-	flashGreen:play() 
+	flashGreen:play() ]]
+
+	tutorialScreen = display.newImageRect("colorBounceTut1New3.jpg", display.contentWidth * 1.20, display.contentHeight)
+	tutorialScreen.x = display.contentCenterX
+	tutorialScreen.y = display.contentCenterY 
 
 	local tapToContinue = display.newText("Tap anywhere to continue",display.contentWidth/2, 30, "Arial", 36)
 	tapToContinue:setTextColor(0,0,0)
@@ -75,9 +80,8 @@ function scene:show ( event )
 	}
 	continueButton.isHitTestable = true
 
-	sceneGroup:insert(flashGreen)
-	sceneGroup:insert(tapToContinue)
-	sceneGroup:insert(continueButton)
+	--sceneGroup:insert(flashGreen)
+
 
 	local mParams = event.params
 	local function handleContinueButtonEvent( event ) 
@@ -103,6 +107,10 @@ function scene:show ( event )
 		end
 	continueButton:addEventListener("touch", handleContinueButtonEvent)
 	continueButton.alpha = 0
+	sceneGroup:insert(tutorialScreen)
+	sceneGroup:insert(tapToContinue)
+	sceneGroup:insert(continueButton)
+
 end
 
 function scene:hide ( event )
@@ -115,7 +123,7 @@ function scene:destroy ( event )
 	blinkText = nil
 	continueButton:removeEventListener( "touch", handleContinueButtonEvent )
 	tutorialSheet = nil
-	display.remove(sequences_flashGreen)
+	--display.remove(sequences_flashGreen)
 	display.remove(tapToContinue)
 	sequences_flashGreen = nil
 	transition.cancel(myTransition)
