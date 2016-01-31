@@ -41,6 +41,11 @@ settings = {
         {
             publisherId = "com.coronalabs"
         },
+        ["CoronaProvider.gameNetwork.apple"] =
+        {
+            publisherId = "com.coronalabs",
+            supportedPlatforms = { iphone=true, ["iphone-sim"]=true },
+        },
          -- key is the name passed to Lua's 'require()'
         
     },      

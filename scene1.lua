@@ -1,4 +1,5 @@
 local composer = require( "composer" )
+local gameNetwork = require( "gameNetwork" )
 local scene = composer.newScene()
 composer.removeOnSceneChange = true
 physics.start(true);
@@ -66,6 +67,52 @@ local ecolor
 local backgroundMusic
 local playBackgroundMusic
 local newColorCalled = false
+profiler = require "Profiler"; 
+profiler.startProfiler({mode = 2, time = 10000, delay = 1000});
+
+
+
+
+--[[
+local function screenshot()	
+
+	--I set the filename to be "widthxheight_time.png"
+	--e.g. "1920x1080_20140923151732.png"
+	local date = os.date( "*t" )
+	local timeStamp = table.concat({date.year .. date.month .. date.day .. date.hour .. date.min .. date.sec})
+	local fname = display.pixelWidth.."x"..display.pixelHeight.."_"..timeStamp..".png"
+	
+	--capture screen
+	local capture = display.captureScreen(false)
+
+	--make sure image is right in the center of the screen
+	capture.x, capture.y = display.contentWidth * 0.5, display.contentHeight * 0.5
+
+	--save the image and then remove
+	local function save()
+		display.save( capture, { filename=fname, baseDir=system.DocumentsDirectory, isFullResolution=true } )    
+		capture:removeSelf()
+		capture = nil
+	end
+	timer.performWithDelay( 100, save, 1)
+	       	
+	return true               
+end
+
+
+--works in simulator too
+local function onKeyEvent(event)
+	if event.phase == "up" then
+		--press s key to take screenshot which matches resolution of the device
+    	    if event.keyName == "s" then
+    		screenshot()
+    	    end
+        end
+end
+
+Runtime:addEventListener("key", onKeyEvent) 
+--]]
+
 
 
 
@@ -88,13 +135,13 @@ local function adListener( event )
     end
 end
 
---local function checkMemory()
---	collectgarbage( "collect" )
---	local memUsage_str = string.format( "MEMORY = %.3f KB", collectgarbage( "count" ) )
---	print( memUsage_str, "TEXTURE = "..(system.getInfo("textureMemoryUsed") / (1024 * 1024) ) )
---end
+local function checkMemory()
+	collectgarbage( "collect" )
+	local memUsage_str = string.format( "MEMORY = %.3f KB", collectgarbage( "count" ) )
+	print( memUsage_str, "TEXTURE = "..(system.getInfo("textureMemoryUsed") / (1024 * 1024) ) )
+end
 
---timer.performWithDelay( 1000, checkMemory, 0 )
+timer.performWithDelay( 1000, checkMemory, 0 )
 
 
 
@@ -102,42 +149,44 @@ end
 local function after(event)
 	if (rLength<8) then
 		r[rLength] = display.newRect( (display.contentWidth/7) * rLength -display.contentWidth/ 14 , display.contentHeight/2 , display.contentWidth/7 , display.contentHeight)
+		sceneGroup1:insert(r[rLength])
 		r[rLength]:toBack( )
 		r[rLength]:setFillColor( 1,0,0 )
 
 		if (rLength == 1) then
 			r[rLength]:setFillColor( 1,0,0 )
-
-			elseif (rLength == 2) then
-				r[rLength]:setFillColor( 1, .5,0 )
-				elseif (rLength == 3) then
-					r[rLength]:setFillColor( 1, 1,0 )
-					elseif (rLength == 4) then
-						r[rLength]:setFillColor( 0, 1,0 )
-						elseif (rLength == 5) then
-							r[rLength]:setFillColor( 0, 0, 1 )
-							elseif (rLength == 6) then
-								r[rLength]:setFillColor( .5, 0,1 )
-								elseif (rLength == 7) then
-									r[rLength]:setFillColor( 1, 0,.5 )
-								end
-							end
-							if (rLength>10) then
-								r[rLength - 10]:removeSelf( )
-							end
-							
-							rLength = rLength + 1
-							rainbowHappening = false
-						end
+		elseif (rLength == 2) then
+			r[rLength]:setFillColor( 1, .5,0 )
+		elseif (rLength == 3) then
+			r[rLength]:setFillColor( 1, 1,0 )
+		elseif (rLength == 4) then
+			r[rLength]:setFillColor( 0, 1,0 )
+		elseif (rLength == 5) then
+			r[rLength]:setFillColor( 0, 0, 1 )
+		elseif (rLength == 6) then
+			r[rLength]:setFillColor( .5, 0,1 )
+		elseif (rLength == 7) then
+			r[rLength]:setFillColor( 1, 0,.5 )
+		end
+	end
 
 
-						local function rainbow(event)
-							if rainbowHappening == false then
-								rainbowHappening = true
-								rLength = 1
-								timer.performWithDelay(100, after, 17)
-							end
-						end
+	if (rLength>10) then
+		r[rLength - 10]:removeSelf()
+		r[rLength - 10] = nil 
+	end
+	rLength = rLength + 1
+	rainbowHappening = false
+end
+
+
+local function rainbow(event)
+	if rainbowHappening == false then
+		rainbowHappening = true
+		rLength = 1
+		timer.performWithDelay(100, after, 17)
+	end
+end
 
 						local function onComplete( event )
 							if event.action == "clicked" then
@@ -166,11 +215,15 @@ end
 
 local function endGame() 
 	print(score1.load())
+	gameNetwork.request( "setHighScore",
+    {
+        localPlayerScore = { category="com.HueHopper.HighScore", value=score },
+        listener = requestCallback
+    })
 if ((score1.load() == nil ) or (score > score1.load()))then
 	score1.set(score)
 	score1.save()
-	native.showAlert("High Score!", "Congratulations, you scored " .. tostring(score1.load()), {"Continue"}, onComplete)
-
+		native.showAlert("High Score!", "Congratulations, you scored " .. tostring(score1.load()), {"Continue"}, onComplete)
 else
 	native.showAlert("Score", "You scored " .. score .. "... Better luck next time!", {"Continue"}, onComplete)
 		--composer.gotoScene("scene2", options)
@@ -268,10 +321,11 @@ local function changeColor4(event)
 end
 
 local function touchHandler( event )
+	print(hasCollided)
 	if event.phase == "began" then
 		if (canJump and hasCollided and guy.y < blockGuyY + 4) then
-			display.getCurrentStage():setFocus(event.target)
-			event.target.isFocus = true
+			--display.getCurrentStage():setFocus(event.target)
+			--event.target.isFocus = true
 			--event.target.isFocus = true
 			--Runtime:addEventListener( "enterFrame", playerGo)
 			jumpSpeed = -175
@@ -280,6 +334,7 @@ local function touchHandler( event )
 			canJump = false
 			hasCollided = false
 			guy:setLinearVelocity(0, -235)
+			
 			--guy:applyForce(0, -800, guy.x, guy.y)
 		--[[	while (holding) do 
 				linearVelocityX, linearVelocityY = guy:getLinearVelocity()
@@ -301,15 +356,16 @@ local function touchHandler( event )
 				end
 			end	
 
+
 			elseif event.target.isFocus then 
 				if event.phase == "moved" then
-					elseif (event.phase == "ended" or event.phase == "cancelled") then
+				elseif (event.phase == "ended" or event.phase == "cancelled") then
 					holding = false
 					jumpSpeed = -125
 					canJump = true
 				--Runtime:removeEventListener( "enterFrame", playerGo)		
-				display.getCurrentStage():setFocus( nil )
-				event.target.isFocus = false
+				--display.getCurrentStage():setFocus( nil )
+				--event.target.isFocus = false
 			end
 
 		end
@@ -323,13 +379,13 @@ local function newColor()
 	sceneGroup1:remove(red)
 	sceneGroup1:remove(blue)
 	sceneGroup1:remove(green)
-	red = display.newRect(display.contentWidth/8, display.contentHeight * .93, display.contentWidth / 4, 65)
+	red = display.newRect(display.contentWidth/8, display.contentHeight * .93, display.contentWidth / 4, 80)
 	red:setFillColor(225/255, 105/225, 97/225)
-	blue = display.newRect(3 * display.contentWidth / 8, display.contentHeight * .93, display.contentWidth / 4, 65)
+	blue = display.newRect(3 * display.contentWidth / 8, display.contentHeight * .93, display.contentWidth / 4, 80)
 	blue:setFillColor(119/255,158/255,203/255)
-	green = display.newRect(5 * display.contentWidth / 8,  display.contentHeight * .93, display.contentWidth / 4, 65)
+	green = display.newRect(5 * display.contentWidth / 8,  display.contentHeight * .93, display.contentWidth / 4, 80)
 	green:setFillColor(119/255,190/255,119/255)
-	purple = display.newRect(7 * display.contentWidth / 8,  display.contentHeight * .93, display.contentWidth / 4, 65)
+	purple = display.newRect(7 * display.contentWidth / 8,  display.contentHeight * .93, display.contentWidth / 4, 80)
 	purple:setFillColor(purpleColors[1],purpleColors[2],purpleColors[3])
 	red.id = 'red'
 	blue.id = 'blue'
@@ -345,16 +401,16 @@ local function newColor()
 	purple:addEventListener( "touch", touchHandler )
 end
 
-
+--and not(shouldEnd))
 local function isAlive( event )
-	if ((guy.y > display.contentHeight or guy.x < -25) and not(shouldEnd)) then
+	if ((guy.y > display.contentHeight or guy.x < -25)) then
 		Runtime:removeEventListener("enterFrame", isAlive)
 		endGame()
 	end
 end
 
 local function movepup (event)
-	powerUp.y =  block.y - math.random(125,250)
+	powerUp.y =  block.y - math.random(125,197)
 	guy:setLinearVelocity( 0  , guy.y < Velocity )
 end
 
@@ -365,7 +421,7 @@ local function spawnPowerUp (event)
 		if (canSpawn == 1) then
 			canSpawn = 0
 			powerUp.x = 700
-			powerUp.y =  block.y - math.random(125, 215); 
+			powerUp.y =  block.y - math.random(125, 197); 
 		end
 	end
 end
@@ -440,7 +496,7 @@ local function raiseSpeed(newScore)
 end
 
 --Updates score, called in onCollision(event)
-function updateScore()
+local function updateScore()
 	score = score + 1
 	scoreBox.text = score
 	raiseSpeed(score)
@@ -556,6 +612,7 @@ end
 --Called to remove explosion animation from screen
 function afterTimer()
 	t[i]:removeSelf()
+	t[i] = nil 
 end
 
 --Function to create explosion animation
@@ -566,6 +623,7 @@ local function explode (event)
 	t[i]:toBack()
 	if (i>2) then
 		t[i-1]:removeSelf( )
+		t[i-1] = nil 
 	end
 	if (i == 16) then
 		timer.performWithDelay(100, afterTimer, 1)
@@ -580,6 +638,9 @@ wasPoweredUp = true
 	--SET COLOR BACK
 	if (gc == 1) then 
 		--set red
+		if (guy == nil) then
+			return
+		end
 		guy:setFillColor(225/255,105/225,97/225)
 		elseif (gc == 2) then 
 		--set blue
@@ -595,7 +656,7 @@ end
 --Function to respawn power up in new location after it disappears from screen
 local function respawnPowerUp( event ) 
 	powerUp.x = 5000 + math.random(speed,  10 * speed); 
-	powerUp.y = block.y - math.random(125,215)
+	powerUp.y = block.y - math.random(125,197)
 end
 
 --Computes the distance between two object coordinates
@@ -638,13 +699,7 @@ local function onCollision( event )
 	blockGuyY = guy.y
 	if ( event.phase == "began" ) then
 		if (event.other.myName == "powerUp") then
-			rainbow()
-		--SET COLOR OF BLOCK HERE 
-			guy:setFillColor(255,255,255)
-			isPoweredUp = true
-			wasPoweredUp = true
-			timers[0] = timer.performWithDelay(50, respawnPowerUp, 1)
-			timers[1] = timer.performWithDelay(7000, endPowerUp, 1)
+			getPowerup()
 			return
 		end
 		hasCollided = true
@@ -934,7 +989,7 @@ end
 
 --Called when scene hid from screen
 function scene:hide( event )
-	
+	cancelTimers()
 	local phase = event.phase
 	if (phase ==  "will") then 
 		physics.pause()
@@ -949,8 +1004,7 @@ function scene:hide( event )
 		Runtime:removeEventListener("enterFrame", go4)
 		Runtime:removeEventListener("enterFrame", pUpGo); 
 		Runtime:removeEventListener("enterFrame", ballRotate); 
-
-		cancelTimers()
+		
 		--composer.removeScene( "scene1" )
 		--if (settings.shouldPlayMusic) then 
 		--audio.stop()

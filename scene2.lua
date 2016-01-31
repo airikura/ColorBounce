@@ -1,4 +1,5 @@
 local composer = require( "composer" )
+local gameNetwork = require( "gameNetwork" )
 local scene = composer.newScene()
 local widget = require( "widget" )
 gameSettings = require("gameSettings")
@@ -128,6 +129,14 @@ function scene:show( event )
 	if ( phase == "will" ) then
 		--Loading ads logic
 		--****************************
+		local function initCallback( event )
+			if ( event.type == "showSignIn" ) then
+			    -- This is an opportunity to pause your game or do other things you might need to do while the Game Center Sign-In controller is up.
+			elseif ( event.data ) then
+			 --   loggedIntoGC = true
+			end
+		end
+		gameNetwork.init( "gamecenter", initCallback )
 		number = number + 1
 		if (ads.isLoaded("interstitial") and (number >= 5)) then
 			ads.show("interstitial", {x = 0, y = 0, appId = interstitialAppID})
